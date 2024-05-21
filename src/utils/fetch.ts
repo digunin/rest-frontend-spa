@@ -1,9 +1,4 @@
-import {
-  Credentials,
-  HTTPMethods,
-  JSONResponse,
-  SingleRecord,
-} from "../api/types";
+import { JSONResponse } from "../api/types";
 
 export const genericFetch = <TResp>(
   url: URL | string,
@@ -24,20 +19,6 @@ export const genericFetch = <TResp>(
         return Promise.reject(err);
       });
   } catch (err) {
-    return Promise.reject(err);
+    return Promise.reject("Network error");
   }
-};
-
-export const createFetchOptions = (
-  method: HTTPMethods,
-  headersInit: HeadersInit,
-  body?: SingleRecord | Credentials
-) => {
-  const headers = new Headers(headersInit);
-  if (body) headers.append("Content-Type", "application/json");
-  return {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  };
 };
