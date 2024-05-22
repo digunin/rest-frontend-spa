@@ -6,9 +6,9 @@ import {
   OutlinedInputProps,
   TextField,
 } from "@mui/material";
-import { useTextInput } from "../../../hooks/useTextInput";
 
 export type TIProps = {
+  type?: "text" | "password";
   label: string;
   value: string;
   error: string | null;
@@ -24,17 +24,16 @@ export type TIProps = {
 };
 
 const TextInput: FC<TIProps> = ({
+  type,
   label,
   value,
   error,
   unTouched,
   fullWidth = false,
   autoComplete,
-  password = false,
   InputProps,
   onchange,
 }) => {
-  const { type } = useTextInput(password);
   return (
     <TextField
       fullWidth={fullWidth}
@@ -43,7 +42,7 @@ const TextInput: FC<TIProps> = ({
       label={label}
       error={!unTouched && !!error}
       helperText={(!unTouched && error) || " "}
-      type={type}
+      type={type || "text"}
       InputProps={InputProps}
       onChange={(e) => onchange(e.target.value, null)}
     ></TextField>

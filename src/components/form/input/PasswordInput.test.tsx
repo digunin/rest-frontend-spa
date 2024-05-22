@@ -18,7 +18,10 @@ describe("password input test", () => {
   const label_text = "label-text";
   const value_text = "some-value";
 
-  const checkPasswordVisibilityButton = (showPassButton: HTMLElement) => {
+  const checkPasswordVisibilityButton = (
+    showPassButton: HTMLElement,
+    value: string
+  ) => {
     fireEvent.mouseOver(showPassButton);
     waitFor(() =>
       expect(screen.getByDisplayValue(/показать пароль/i)).toBeInTheDocument()
@@ -26,6 +29,7 @@ describe("password input test", () => {
     waitFor(() =>
       expect(screen.queryByDisplayValue(/скрыть пароль/i)).toBeFalsy()
     );
+    expect(screen.getByDisplayValue(value)).toHaveAttribute("type", "password");
     fireEvent.click(showPassButton);
     fireEvent.mouseOver(showPassButton);
     waitFor(() =>
@@ -34,6 +38,7 @@ describe("password input test", () => {
     waitFor(() =>
       expect(screen.queryByDisplayValue(/показать пароль/i)).toBeFalsy()
     );
+    expect(screen.getByDisplayValue(value)).toHaveAttribute("type", "text");
     fireEvent.click(showPassButton);
     waitFor(() =>
       expect(screen.getByDisplayValue(/показать пароль/i)).toBeInTheDocument()
@@ -41,6 +46,7 @@ describe("password input test", () => {
     waitFor(() =>
       expect(screen.queryByDisplayValue(/скрыть пароль/i)).toBeFalsy()
     );
+    expect(screen.getByDisplayValue(value)).toHaveAttribute("type", "password");
   };
 
   test("label render", () => {
@@ -50,7 +56,7 @@ describe("password input test", () => {
     });
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(defaultProps.value, label_text, "password");
-    checkPasswordVisibilityButton(showPassButton);
+    checkPasswordVisibilityButton(showPassButton, defaultProps.value);
     checkFalsyTextRender(defaultProps.value, label_text, "password");
   });
 
@@ -61,7 +67,7 @@ describe("password input test", () => {
     });
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(value_text, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton);
+    checkPasswordVisibilityButton(showPassButton, value_text);
     checkFalsyTextRender(value_text, defaultProps.label, "password");
   });
 
@@ -72,7 +78,7 @@ describe("password input test", () => {
     });
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton);
+    checkPasswordVisibilityButton(showPassButton, defaultProps.value);
     expect(screen.queryByText(error_text)).toBeFalsy();
     checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
   });
@@ -86,7 +92,7 @@ describe("password input test", () => {
     });
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton);
+    checkPasswordVisibilityButton(showPassButton, defaultProps.value);
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
     checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
   });
@@ -100,7 +106,7 @@ describe("password input test", () => {
     });
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(value_text, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton);
+    checkPasswordVisibilityButton(showPassButton, value_text);
     expect(screen.queryByText(error_text)).toBeFalsy();
     checkFalsyTextRender(value_text, defaultProps.label, "password");
   });
@@ -119,7 +125,7 @@ describe("password input test", () => {
     });
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(value_text, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton);
+    checkPasswordVisibilityButton(showPassButton, value_text);
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
     checkFalsyTextRender(value_text, defaultProps.label, "password");
   });

@@ -1,28 +1,17 @@
 import React, { FC } from "react";
-import { TIProps } from "./TextInput";
+import TextInput, { TIProps } from "./TextInput";
 import PasswordVisibilityButton from "./PasswordVisibilityButton";
-import { TextField } from "@mui/material";
 import { useTextInput } from "../../../hooks/useTextInput";
+import { WithHandlingError } from "../errors/WithErrorHandling";
 
 type PIProps = Omit<TIProps, "InputProps" | "autoComplete" | "password">;
 
-const PasswordInput: FC<PIProps> = ({
-  label,
-  value,
-  error,
-  unTouched,
-  fullWidth = false,
-  onchange,
-}) => {
+const PasswordInput: FC<PIProps & WithHandlingError> = (props) => {
   const { type, handleCLick, passwordVisibility } = useTextInput(true);
   return (
-    <TextField
-      fullWidth={fullWidth}
+    <TextInput
       autoComplete={"password"}
-      value={value}
-      label={label}
-      error={!unTouched && !!error}
-      helperText={(!unTouched && error) || " "}
+      password={true}
       type={type}
       InputProps={{
         endAdornment: (
@@ -32,8 +21,8 @@ const PasswordInput: FC<PIProps> = ({
           />
         ),
       }}
-      onChange={(e) => onchange(e.target.value, null)}
-    ></TextField>
+      {...props}
+    ></TextInput>
   );
 };
 
