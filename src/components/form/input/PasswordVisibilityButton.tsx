@@ -1,19 +1,20 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, InputAdornment, Tooltip } from "@mui/material";
-import React from "react";
+import React, { FC } from "react";
 
-const PasswordVisibilityButton = ({
-  show = false,
-  tooltip,
-  onclick,
-}: {
+export type PVBProps = {
   show: boolean;
-  tooltip: string;
   onclick: () => void;
-}) => {
+};
+
+const PasswordVisibilityButton: FC<PVBProps> = ({ show = false, onclick }) => {
   return (
     <InputAdornment position="end">
-      <Tooltip title={tooltip} arrow placement="top">
+      <Tooltip
+        title={show ? "Скрыть пароль" : "Показать пароль"}
+        arrow
+        placement="top"
+      >
         <IconButton aria-label="toggle password visibility" onClick={onclick}>
           {show ? <Visibility /> : <VisibilityOff />}
         </IconButton>

@@ -1,7 +1,12 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import WithErrorHandling from "../errors/WithErrorHandling";
-import { TextField } from "@mui/material";
-import PasswordVisibilityButton from "./PasswordVisibilityButton";
+import {
+  FilledInputProps,
+  InputProps,
+  OutlinedInputProps,
+  TextField,
+} from "@mui/material";
+import { useTextInput } from "../../../hooks/useTextInput";
 
 export type TIProps = {
   label: string;
@@ -11,6 +16,10 @@ export type TIProps = {
   autoComplete?: string;
   password?: boolean;
   unTouched: boolean;
+  InputProps?:
+    | Partial<FilledInputProps>
+    | Partial<OutlinedInputProps>
+    | Partial<InputProps>;
   onchange: (value: string, error: string | null) => void;
 };
 
@@ -22,12 +31,10 @@ const TextInput: FC<TIProps> = ({
   fullWidth = false,
   autoComplete,
   password = false,
+  InputProps,
   onchange,
 }) => {
-  const [passwordVisibility, setPasswordVisibility] = useState(false);
-  const handleCLick = () => setPasswordVisibility((prev) => !prev);
-  const tooltip = passwordVisibility ? "Скрыть пароль" : "Показать пароль";
-
+  const { type } = useTextInput(password);
   return (
     <TextField
       fullWidth={fullWidth}
@@ -36,20 +43,8 @@ const TextInput: FC<TIProps> = ({
       label={label}
       error={!unTouched && !!error}
       helperText={(!unTouched && error) || " "}
-      type={!password || passwordVisibility ? "text" : "password"}
-      InputProps={
-        password
-          ? {
-              endAdornment: (
-                <PasswordVisibilityButton
-                  tooltip={tooltip}
-                  onclick={handleCLick}
-                  show={passwordVisibility}
-                />
-              ),
-            }
-          : {}
-      }
+      type={type}
+      InputProps={InputProps}
       onChange={(e) => onchange(e.target.value, null)}
     ></TextField>
   );
