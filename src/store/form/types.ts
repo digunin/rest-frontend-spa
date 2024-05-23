@@ -21,10 +21,14 @@ export type ReducerName<N> = N extends FormName
   ? `set${Capitalize<N>}InputField`
   : never;
 
-export interface WithInputField<N> {
+export type WithInputField<N> = {
   inputField: InputField;
   name: N;
-}
+};
+
+export type FormPayload<N extends FormName> = {
+  [key in TypeOfFieldName<N>]: string;
+};
 
 export type FormReducer<N extends FormName> = (
   state: FormState<N>,
