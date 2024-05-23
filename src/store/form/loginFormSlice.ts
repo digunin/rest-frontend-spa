@@ -27,5 +27,6 @@ export const {
   setLoginInputField,
   setTouched,
   setTouchedAll,
+  resetForm,
 } = SignInSlice.actions;
 export default SignInSlice.reducer;

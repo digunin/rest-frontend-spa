@@ -28,6 +28,9 @@ export const createSliceOptions = <N extends FormName>(
           state[name as TypeOfFieldName<N>].unTouched = false;
         }
       },
+      resetForm: (state: FormState<N>) => {
+        return initialState;
+      },
       ...reducer,
     },
   };
