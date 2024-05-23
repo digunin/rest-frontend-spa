@@ -6,3 +6,8 @@ export const labels = {
 export const error_messages = {
   notEmpty: "Поле не должно быть пустым",
 };
+
+export const label_text = {
+  login: "Логин",
+  password: "Пароль",
+};
