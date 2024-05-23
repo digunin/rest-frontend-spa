@@ -1,26 +1,14 @@
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "./store";
-import { Container, Grid, Typography } from "@mui/material";
-import { setUser } from "./store/userSlice";
+import React from "react";
+import { Container } from "@mui/material";
+import { useAuth } from "./hooks/useAuth";
+import Login from "./components/form/Login";
 
 function App() {
-  const dispatch = useAppDispatch();
-  const username = useAppSelector((state) => state.userState.username);
-
-  useEffect(() => {
-    dispatch(setUser({ username: "World", token: "undefined" }));
-  }, []);
+  const { isAuth } = useAuth();
 
   return (
-    <Container maxWidth="md">
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        sx={{ minHeight: "100vh" }}
-      >
-        <Typography>{`Hello, ${username}!`}</Typography>
-      </Grid>
+    <Container id="app" maxWidth="md">
+      {!isAuth && <Login />}
     </Container>
   );
 }
