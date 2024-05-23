@@ -11,6 +11,7 @@ import {
   mocked_single_record,
 } from "../utils/mock.fetch";
 import { fail } from "assert";
+import { error_messages } from "../utils/text";
 
 describe("crudAPI test", () => {
   global.fetch = jest.fn();
@@ -36,7 +37,7 @@ describe("crudAPI test", () => {
       .login({ username: "", password: "" })
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("read success", async () => {
@@ -58,7 +59,7 @@ describe("crudAPI test", () => {
       .read("")
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("create success", async () => {
@@ -80,7 +81,7 @@ describe("crudAPI test", () => {
       .create(mocked_single_record, "")
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("update success", async () => {
@@ -102,7 +103,7 @@ describe("crudAPI test", () => {
       .update(mocked_single_record, "", "")
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("delete success", async () => {
@@ -123,7 +124,7 @@ describe("crudAPI test", () => {
       .delete("", "")
       .then((data) => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("delete failed (wrong id)", async () => {

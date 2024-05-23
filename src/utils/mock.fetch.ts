@@ -1,4 +1,5 @@
 import { ResponsedSingleRecord, SingleRecord, Token } from "../api/types";
+import { error_messages } from "./text";
 
 export const mock_login_success = (resolveddData: Token) =>
   Promise.resolve({
@@ -17,7 +18,7 @@ export const mock_login_failed = (resp: Object) =>
       Promise.resolve({
         data: null,
         error_code: 2004,
-        error_text: "Access deny",
+        error_text: error_messages.accessDeny,
       }),
   });
 
@@ -41,7 +42,7 @@ export const mock_CRUD_failed = (resolved: Object) =>
       Promise.resolve({
         data: null,
         error_code: 2004,
-        error_text: "Access deny",
+        error_text: error_messages.accessDeny,
         ...resolved,
       }),
   });

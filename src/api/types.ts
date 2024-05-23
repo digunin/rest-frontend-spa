@@ -23,6 +23,8 @@ export type JSONResponse<TResp> = {
   error_text?: string;
 };
 
+export type NetworkStatus = "loading" | "idle" | "failed";
+
 export type CRUD_API = {
   login: (credentials: Credentials) => Promise<Token>;
   read: (token: string) => Promise<ResponsedSingleRecord[]>;

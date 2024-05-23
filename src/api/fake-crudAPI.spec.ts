@@ -6,6 +6,7 @@ import {
   mocked_single_record,
 } from "../utils/mock.fetch";
 import { fakeCredentials, fakeToken } from "./fake-crudAPI";
+import { error_messages } from "../utils/text";
 
 describe("FakeAPI test", () => {
   const { username, password } = fakeCredentials;
@@ -21,7 +22,7 @@ describe("FakeAPI test", () => {
     const result = await FakeAPI.login({ username: "", password: "" })
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("read success", async () => {
@@ -35,7 +36,7 @@ describe("FakeAPI test", () => {
     const result = await FakeAPI.read("")
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("create success", async () => {
@@ -49,7 +50,7 @@ describe("FakeAPI test", () => {
     const result = await FakeAPI.create(mocked_single_record, "")
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("update success", async () => {
@@ -67,7 +68,7 @@ describe("FakeAPI test", () => {
     const result = await FakeAPI.update(mocked_single_record, "", "")
       .then(() => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 
   test("delete success", async () => {
@@ -80,6 +81,6 @@ describe("FakeAPI test", () => {
     const result = await FakeAPI.delete("", "")
       .then((data) => fail("promise RESOLVED when reject expect"))
       .catch((err) => err);
-    expect(result).toBe("Access deny");
+    expect(result).toBe(error_messages.accessDeny);
   });
 });

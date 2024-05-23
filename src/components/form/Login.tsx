@@ -3,7 +3,7 @@ import { Box, Button, Grid } from "@mui/material";
 import TextInput from "./input/TextInput";
 import PasswordInput from "./input/PasswordInput";
 import { notEmpty } from "./errors";
-import { label_text } from "../../utils/text";
+import { error_messages, label_text } from "../../utils/text";
 import { useForm } from "../../hooks/useForm";
 import {
   resetForm,
@@ -37,7 +37,10 @@ const Login = () => {
         dispatch(resetForm());
       })
       .catch((err: { message: string }) => {
-        const error = err.message;
+        const error =
+          err.message === error_messages.accessDeny
+            ? "Неверный логин или пароль"
+            : err.message;
         dispatch(
           setLoginInputField({
             name: "username",

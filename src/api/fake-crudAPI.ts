@@ -7,6 +7,7 @@ import {
   CRUD_API,
 } from "./types";
 import { mocked_read_response_data } from "../utils/mock.fetch";
+import { error_messages } from "../utils/text";
 
 const delay = 500;
 export const fakeToken = "fake-token";
@@ -24,7 +25,7 @@ export const FakeAPI: CRUD_API = {
           credentials.password === fakeCredentials.password
         ) {
           res({ token: fakeToken });
-        } else rej("Access deny");
+        } else rej(error_messages.accessDeny);
       }, delay);
     });
   },
@@ -33,7 +34,7 @@ export const FakeAPI: CRUD_API = {
       setTimeout(() => {
         if (token === fakeToken) {
           res(mocked_read_response_data);
-        } else rej("Access deny");
+        } else rej(error_messages.accessDeny);
       }, delay);
     });
   },
@@ -45,7 +46,7 @@ export const FakeAPI: CRUD_API = {
       setTimeout(() => {
         if (token === fakeToken) {
           res({ ...record, id: "qqq-www-eee-rrr-ttt" });
-        } else rej("Access deny");
+        } else rej(error_messages.accessDeny);
       }, delay);
     });
   },
@@ -58,7 +59,7 @@ export const FakeAPI: CRUD_API = {
       setTimeout(() => {
         if (token === fakeToken) {
           res({ ...record, id });
-        } else rej("Access deny");
+        } else rej(error_messages.accessDeny);
       }, delay);
     });
   },
@@ -67,7 +68,7 @@ export const FakeAPI: CRUD_API = {
       setTimeout(() => {
         if (token === fakeToken) {
           res();
-        } else rej("Access deny");
+        } else rej(error_messages.accessDeny);
       }, delay);
     });
   },
