@@ -2,40 +2,16 @@ import React, { FormEvent } from "react";
 import { Box, Button, Grid } from "@mui/material";
 import TextInput from "./input/TextInput";
 import PasswordInput from "./input/PasswordInput";
-import {
-  setLoginInputField,
-  setTouchedAll,
-} from "../../store/form/loginFormSlice";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { LoginFormFieldName } from "../../store/form/setup-forms.types";
 import { notEmpty } from "./errors";
 import { label_text } from "../../utils/text";
+import { useForm } from "../../hooks/useForm";
+import { setLoginInputField } from "../../store/form/loginFormSlice";
+import { useAppSelector } from "../../store";
 
 const Login = () => {
-  const dispatch = useAppDispatch();
-  const { username, password } = useAppSelector(
-    (state) => state.loginFormState
-  );
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    dispatch(setTouchedAll());
-  };
-  const handleChange = (
-    value: string,
-    error: string | null,
-    name: LoginFormFieldName
-  ) => {
-    dispatch(
-      setLoginInputField({
-        name,
-        inputField: {
-          value,
-          error,
-          unTouched: false,
-        },
-      })
-    );
-  };
+  const inputFields = useAppSelector((state) => state.loginFormState);
+  const { handleChange, onSubmit } = useForm(inputFields, setLoginInputField);
+  const { username, password } = inputFields;
   return (
     <Grid container id="login" className="login-form-container">
       <Box component="form" role="form" onSubmit={onSubmit} sx={{ width: 300 }}>
