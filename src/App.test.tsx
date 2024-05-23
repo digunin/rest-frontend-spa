@@ -3,13 +3,13 @@ import { screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import App from "./App";
 import { renderWithProvider } from "./utils/rtl-render-helper";
-import * as UseAuth from "./hooks/useAuth";
+import * as Cookie from "./utils/cookies-api";
 
 describe("App testing", () => {
   test("render with user = null", () => {
     jest
-      .spyOn(UseAuth, "useAuth")
-      .mockReturnValueOnce({ isAuth: false, username: "", token: "" });
+      .spyOn(Cookie, "getCookies")
+      .mockReturnValueOnce({ username: null, token: null });
     renderWithProvider(<App />);
     expect(screen.getByLabelText(/логин/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/пароль/i)).toBeInTheDocument();
