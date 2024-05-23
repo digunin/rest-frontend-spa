@@ -10,6 +10,7 @@ const mainThemeOptions: ThemeOptions = {
     MuiTextField: {
       defaultProps: {
         size: "small",
+        margin: "dense",
       },
     },
   },

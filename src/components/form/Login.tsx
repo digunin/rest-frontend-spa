@@ -5,16 +5,62 @@ import PasswordInput from "./input/PasswordInput";
 import { notEmpty } from "./errors";
 import { label_text } from "../../utils/text";
 import { useForm } from "../../hooks/useForm";
-import { setLoginInputField } from "../../store/form/loginFormSlice";
+import {
+  resetForm,
+  selectIsFormValid,
+  setLoginInputField,
+  setTouchedAll,
+} from "../../store/form/loginFormSlice";
 import { useAppSelector } from "../../store";
+import { signIn } from "../../store/userSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
+import LinearProgressBar from "../LinearProgressBar";
+import { useSignIn } from "../../hooks/useSignIn";
 
 const Login = () => {
   const inputFields = useAppSelector((state) => state.loginFormState);
-  const { handleChange, onSubmit } = useForm(inputFields, setLoginInputField);
+  const isFormValid = useAppSelector(selectIsFormValid);
+  const { handleChange, formPayload, dispatch } = useForm(
+    inputFields,
+    setLoginInputField
+  );
   const { username, password } = inputFields;
+  const { loading } = useSignIn();
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    dispatch(setTouchedAll());
+    if (!isFormValid) return;
+    dispatch(signIn(formPayload))
+      .then(unwrapResult)
+      .then(() => {
+        dispatch(resetForm());
+      })
+      .catch((err: { message: string }) => {
+        const error = err.message;
+        dispatch(
+          setLoginInputField({
+            name: "username",
+            inputField: { ...username, error },
+          })
+        );
+        dispatch(
+          setLoginInputField({
+            name: "password",
+            inputField: { ...password, error },
+          })
+        );
+      });
+  };
+
   return (
     <Grid container id="login" className="login-form-container">
-      <Box component="form" role="form" onSubmit={onSubmit} sx={{ width: 300 }}>
+      <Box
+        component="form"
+        role="form"
+        onSubmit={handleSubmit}
+        sx={{ width: 300 }}
+      >
         <TextInput
           fullWidth
           autoComplete="login"
@@ -46,6 +92,7 @@ const Login = () => {
         >
           ОК
         </Button>
+        <LinearProgressBar show={loading} />
       </Box>
     </Grid>
   );
