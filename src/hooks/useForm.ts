@@ -1,6 +1,4 @@
-import { FormEvent } from "react";
 import { useAppDispatch } from "../store";
-import { setTouchedAll } from "../store/form/loginFormSlice";
 import { FormName, TypeOfFieldName } from "../store/form/setup-forms.types";
 import { FormPayload, FormState, WithInputField } from "../store/form/types";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
@@ -11,14 +9,11 @@ export const useForm = <N extends FormName>(
 ) => {
   const dispatch = useAppDispatch();
   const formPayload = createFormPayload(inputFields);
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    dispatch(setTouchedAll());
-  };
+
   const handleChange = (
+    name: TypeOfFieldName<N>,
     value: string,
-    error: string | null,
-    name: TypeOfFieldName<N>
+    error: string | null
   ) => {
     dispatch(
       reducer({
@@ -31,7 +26,7 @@ export const useForm = <N extends FormName>(
       })
     );
   };
-  return { formPayload, handleChange, dispatch, onSubmit };
+  return { formPayload, handleChange, dispatch };
 };
 
 const createFormPayload = <N extends FormName>(inputFields: FormState<N>) => {
