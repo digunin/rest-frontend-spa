@@ -6,6 +6,7 @@ export const labels = {
 export const error_messages = {
   notEmpty: "Поле не должно быть пустым",
   accessDeny: "Access deny",
+  signIn: "Неверный логин или пароль",
 };
 
 export const label_text = {

@@ -1,8 +1,9 @@
 import { useAppSelector } from "../store";
 
 export const useSignIn = () => {
-  const { status } = useAppSelector((state) => state.userState);
+  const { status, error } = useAppSelector((state) => state.userState);
   return {
     loading: status === "loading",
+    error,
   };
 };

@@ -10,7 +10,6 @@ import {
 import { signIn } from "../store/userSlice";
 import { useForm } from "./useForm";
 import { useSignIn } from "./useSignIn";
-import { error_messages } from "../utils/text";
 
 export const useLoginForm = () => {
   const inputFields = useAppSelector((state) => state.loginFormState);
@@ -19,11 +18,11 @@ export const useLoginForm = () => {
     inputFields,
     setLoginInputField
   );
-  const { username, password } = inputFields;
-  const { loading } = useSignIn();
+  const { loading, error } = useSignIn();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
     dispatch(setTouchedAll());
     if (!isFormValid) return;
     dispatch(signIn(formPayload))
@@ -31,25 +30,8 @@ export const useLoginForm = () => {
       .then(() => {
         dispatch(resetForm());
       })
-      .catch((err: { message: string }) => {
-        const error =
-          err.message === error_messages.accessDeny
-            ? "Неверный логин или пароль"
-            : err.message;
-        dispatch(
-          setLoginInputField({
-            name: "username",
-            inputField: { ...username, error },
-          })
-        );
-        dispatch(
-          setLoginInputField({
-            name: "password",
-            inputField: { ...password, error },
-          })
-        );
-      });
+      .catch((err) => {});
   };
 
-  return { handleSubmit, handleChange, inputFields, loading };
+  return { handleSubmit, handleChange, inputFields, loading, error };
 };
