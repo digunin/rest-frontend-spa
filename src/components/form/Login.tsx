@@ -6,11 +6,9 @@ import LinearProgressBar from "../LinearProgressBar";
 import { useLoginForm } from "../../hooks/useLoginForm";
 import { notEmpty } from "./errors";
 import { label_text } from "../../utils/text";
-import ErrorSnack from "../ErrorSnack";
 
 const Login = () => {
-  const { handleSubmit, inputFields, handleChange, loading, error } =
-    useLoginForm();
+  const { handleSubmit, inputFields, handleChange, loading } = useLoginForm();
   const { username, password } = inputFields;
 
   return (
@@ -55,7 +53,6 @@ const Login = () => {
         </Button>
         <LinearProgressBar show={loading} />
       </Box>
-      {error && <ErrorSnack message={error} />}
     </Grid>
   );
 };

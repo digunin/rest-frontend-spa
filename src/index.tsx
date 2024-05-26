@@ -6,6 +6,7 @@ import { store } from "./store";
 import "./sass/index.sass";
 import { ThemeProvider } from "@mui/material";
 import { mainTheme } from "./theme";
+import { SnackbarProvider } from "notistack";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -14,7 +15,9 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider theme={mainTheme}>
-        <App />
+        <SnackbarProvider maxSnack={3}>
+          <App />
+        </SnackbarProvider>
       </ThemeProvider>
     </Provider>
   </React.StrictMode>
