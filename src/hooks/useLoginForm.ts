@@ -1,6 +1,5 @@
-import { FormEvent, useEffect } from "react";
+import { FormEvent } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useSnackbar } from "notistack";
 import { useAppSelector } from "../store";
 import {
   resetForm,
@@ -13,7 +12,6 @@ import { useForm } from "./useForm";
 import { useSignIn } from "./useSignIn";
 
 export const useLoginForm = () => {
-  const { enqueueSnackbar } = useSnackbar();
   const inputFields = useAppSelector((state) => state.loginFormState);
   const isFormValid = useAppSelector(selectIsFormValid);
   const { handleChange, formPayload, dispatch } = useForm(
@@ -21,11 +19,6 @@ export const useLoginForm = () => {
     setLoginInputField
   );
   const { loading, error } = useSignIn();
-
-  useEffect(() => {
-    if (!error) return;
-    enqueueSnackbar(error, { variant: "error" });
-  }, [error]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
