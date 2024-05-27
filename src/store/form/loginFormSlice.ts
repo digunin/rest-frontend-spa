@@ -24,7 +24,6 @@ export const selectIsFormValid = (state: RootState): boolean =>
 export const {
   setInitialValues,
   setLoginInputField,
-  setTouched,
   setTouchedAll,
   resetForm,
 } = SignInSlice.actions;

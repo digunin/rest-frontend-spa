@@ -1,11 +1,5 @@
 import { PayloadAction, PrepareAction } from "@reduxjs/toolkit";
-import {
-  FormReducer,
-  FormState,
-  InputField,
-  ReducerName,
-  WithInputField,
-} from "./types";
+import { FormReducer, FormState, ReducerName, WithInputField } from "./types";
 import { FormName, TypeOfFieldName } from "./setup-forms.types";
 
 export const createSliceOptions = <N extends FormName>(
@@ -27,12 +21,6 @@ export const createSliceOptions = <N extends FormName>(
         action: PayloadAction<FormState<N>>
       ) => {
         return action.payload;
-      },
-      setTouched: (
-        state: FormState<N>,
-        action: PayloadAction<TypeOfFieldName<N>>
-      ) => {
-        state[action.payload].unTouched = false;
       },
       setTouchedAll: (state: FormState<N>) => {
         for (let name of Object.keys(state)) {
@@ -61,9 +49,12 @@ export const formReducerWithPreparedPayload = {
     state: FormState<N>,
     action: PayloadAction<WithInputField<TypeOfFieldName<N>>>
   ) => {
-    state[action.payload.name] = action.payload.inputField;
+    state[action.payload.name] = {
+      ...action.payload.inputPayload,
+      unTouched: false,
+    };
   },
-  prepare: (name: any, inputField: InputField) => {
-    return { payload: { name, inputField } };
+  prepare: (name: any, value: string, error: string) => {
+    return { payload: { name, inputPayload: { value, error } } };
   },
 };

@@ -19,7 +19,7 @@ export type TIProps = {
     | Partial<FilledInputProps>
     | Partial<OutlinedInputProps>
     | Partial<InputProps>;
-  onchange: (value: string, error: string | null) => void;
+  onchange: (value: string, error: string) => void;
 };
 
 const TextInput: FC<TIProps> = ({
@@ -42,7 +42,7 @@ const TextInput: FC<TIProps> = ({
       helperText={(!unTouched && error) || " "}
       type={type || "text"}
       InputProps={InputProps}
-      onChange={(e) => onchange(e.target.value, null)}
+      onChange={(e) => onchange(e.target.value, "")}
     ></TextField>
   );
 };

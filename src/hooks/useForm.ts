@@ -11,7 +11,7 @@ import { ActionCreatorWithPreparedPayload } from "@reduxjs/toolkit";
 export const useForm = <N extends FormName>(
   inputFields: FormState<N>,
   reducer: ActionCreatorWithPreparedPayload<
-    [TypeOfFieldName<N>, InputField],
+    [TypeOfFieldName<N>, string, string],
     WithInputField<TypeOfFieldName<N>>
   >
 ) => {
@@ -21,15 +21,9 @@ export const useForm = <N extends FormName>(
   const handleChange = (
     name: TypeOfFieldName<N>,
     value: string,
-    error: string | null
+    error: string
   ) => {
-    dispatch(
-      reducer(name, {
-        value,
-        error,
-        unTouched: false,
-      })
-    );
+    dispatch(reducer(name, value, error));
   };
   return { formPayload, handleChange, dispatch };
 };

@@ -3,12 +3,14 @@ import { FormName, TypeOfFieldName } from "./setup-forms.types";
 
 export type InputField = {
   value: string;
-  error: string | null;
+  error: string;
   unTouched: boolean;
 };
 
+export type InputPayload = Omit<InputField, "unTouched">;
+
 export const defaulInputField: InputField = {
-  error: null,
+  error: "",
   value: "",
   unTouched: true,
 };
@@ -22,7 +24,7 @@ export type ReducerName<N> = N extends FormName
   : never;
 
 export type WithInputField<N> = {
-  inputField: InputField;
+  inputPayload: InputPayload;
   name: N;
 };
 
