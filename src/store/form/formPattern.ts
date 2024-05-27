@@ -1,10 +1,21 @@
-import { PayloadAction } from "@reduxjs/toolkit";
-import { FormState, FormReducer, ReducerName } from "./types";
+import { PayloadAction, PrepareAction } from "@reduxjs/toolkit";
+import {
+  FormReducer,
+  FormState,
+  InputField,
+  ReducerName,
+  WithInputField,
+} from "./types";
 import { FormName, TypeOfFieldName } from "./setup-forms.types";
 
 export const createSliceOptions = <N extends FormName>(
   name: N,
-  reducer: { [key in ReducerName<N>]: FormReducer<N> },
+  reducer: {
+    [key in ReducerName<N>]: {
+      reducer: FormReducer<N>;
+      prepare: PrepareAction<WithInputField<TypeOfFieldName<N>>>;
+    };
+  },
   initialState: FormState<N>
 ) => {
   return {
@@ -43,4 +54,16 @@ export const isFormValid = <T extends FormState<any>>(
     if (inputField.error) return false;
   }
   return true;
+};
+
+export const formReducerWithPreparedPayload = {
+  reducer: <N extends FormName>(
+    state: FormState<N>,
+    action: PayloadAction<WithInputField<TypeOfFieldName<N>>>
+  ) => {
+    state[action.payload.name] = action.payload.inputField;
+  },
+  prepare: (name: any, inputField: InputField) => {
+    return { payload: { name, inputField } };
+  },
 };

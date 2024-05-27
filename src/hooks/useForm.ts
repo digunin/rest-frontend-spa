@@ -1,11 +1,19 @@
 import { useAppDispatch } from "../store";
 import { FormName, TypeOfFieldName } from "../store/form/setup-forms.types";
-import { FormPayload, FormState, WithInputField } from "../store/form/types";
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import {
+  FormPayload,
+  FormState,
+  InputField,
+  WithInputField,
+} from "../store/form/types";
+import { ActionCreatorWithPreparedPayload } from "@reduxjs/toolkit";
 
 export const useForm = <N extends FormName>(
   inputFields: FormState<N>,
-  reducer: ActionCreatorWithPayload<WithInputField<TypeOfFieldName<N>>>
+  reducer: ActionCreatorWithPreparedPayload<
+    [TypeOfFieldName<N>, InputField],
+    WithInputField<TypeOfFieldName<N>>
+  >
 ) => {
   const dispatch = useAppDispatch();
   const formPayload = createFormPayload(inputFields);
@@ -16,13 +24,10 @@ export const useForm = <N extends FormName>(
     error: string | null
   ) => {
     dispatch(
-      reducer({
-        name,
-        inputField: {
-          value,
-          error,
-          unTouched: false,
-        },
+      reducer(name, {
+        value,
+        error,
+        unTouched: false,
       })
     );
   };
