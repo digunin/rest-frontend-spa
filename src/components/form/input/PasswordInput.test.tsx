@@ -3,14 +3,16 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import PasswordInput from "./PasswordInput";
 import { TIProps } from "./TextInput";
-import { checkFalsyTextRender, MUI_helper_text_class } from "./TextInput.test";
+import {
+  checkFalsyTextRender,
+  MUI_helper_text_class,
+  createInputField,
+} from "./TextInput.test";
 
 describe("password input test", () => {
   let defaultProps: TIProps = {
     label: "text input",
-    value: "initial-value",
-    error: "",
-    unTouched: true,
+    inputField: { value: "initial-value", error: "", unTouched: true },
     onchange: jest.fn,
   };
 
@@ -55,13 +57,21 @@ describe("password input test", () => {
       name: /toggle password visibility/i,
     });
     expect(showPassButton).toBeInTheDocument();
-    checkFalsyTextRender(defaultProps.value, label_text, "password");
-    checkPasswordVisibilityButton(showPassButton, defaultProps.value);
-    checkFalsyTextRender(defaultProps.value, label_text, "password");
+    checkFalsyTextRender(defaultProps.inputField.value, label_text, "password");
+    checkPasswordVisibilityButton(
+      showPassButton,
+      defaultProps.inputField.value
+    );
+    checkFalsyTextRender(defaultProps.inputField.value, label_text, "password");
   });
 
   test("value render", () => {
-    render(<PasswordInput {...defaultProps} value={value_text} />);
+    render(
+      <PasswordInput
+        {...defaultProps}
+        inputField={createInputField(value_text)}
+      />
+    );
     const showPassButton = screen.getByRole("button", {
       name: /toggle password visibility/i,
     });
@@ -72,34 +82,67 @@ describe("password input test", () => {
   });
 
   test("error render", () => {
-    render(<PasswordInput {...defaultProps} error={error_text} />);
-    const showPassButton = screen.getByRole("button", {
-      name: /toggle password visibility/i,
-    });
-    expect(showPassButton).toBeInTheDocument();
-    checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton, defaultProps.value);
-    expect(screen.queryByText(error_text)).toBeFalsy();
-    checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
-  });
-
-  test("error render, unTouched = false", () => {
     render(
-      <PasswordInput {...defaultProps} error={error_text} unTouched={false} />
+      <PasswordInput
+        {...defaultProps}
+        inputField={createInputField(null, error_text)}
+      />
     );
     const showPassButton = screen.getByRole("button", {
       name: /toggle password visibility/i,
     });
     expect(showPassButton).toBeInTheDocument();
-    checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
-    checkPasswordVisibilityButton(showPassButton, defaultProps.value);
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label,
+      "password"
+    );
+    checkPasswordVisibilityButton(
+      showPassButton,
+      defaultProps.inputField.value
+    );
+    expect(screen.queryByText(error_text)).toBeFalsy();
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label,
+      "password"
+    );
+  });
+
+  test("error render, unTouched = false", () => {
+    render(
+      <PasswordInput
+        {...defaultProps}
+        inputField={createInputField(null, error_text, false)}
+      />
+    );
+    const showPassButton = screen.getByRole("button", {
+      name: /toggle password visibility/i,
+    });
+    expect(showPassButton).toBeInTheDocument();
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label,
+      "password"
+    );
+    checkPasswordVisibilityButton(
+      showPassButton,
+      defaultProps.inputField.value
+    );
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
-    checkFalsyTextRender(defaultProps.value, defaultProps.label, "password");
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label,
+      "password"
+    );
   });
 
   test("value, error render", () => {
     render(
-      <PasswordInput {...defaultProps} value={value_text} error={"error"} />
+      <PasswordInput
+        {...defaultProps}
+        inputField={createInputField(value_text, "error")}
+      />
     );
     const showPassButton = screen.getByRole("button", {
       name: /toggle password visibility/i,
@@ -115,9 +158,7 @@ describe("password input test", () => {
     render(
       <PasswordInput
         {...defaultProps}
-        value={value_text}
-        error={error_text}
-        unTouched={false}
+        inputField={createInputField(value_text, error_text, false)}
       />
     );
     const showPassButton = screen.getByRole("button", {

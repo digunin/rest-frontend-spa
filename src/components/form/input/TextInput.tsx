@@ -6,16 +6,15 @@ import {
   OutlinedInputProps,
   TextField,
 } from "@mui/material";
+import { InputField } from "../../../store/form/types";
 
 export type TIProps = {
   type?: "text" | "password";
   label: string;
-  value: string;
-  error: string | null;
+  inputField: InputField;
   fullWidth?: boolean;
   autoComplete?: string;
   password?: boolean;
-  unTouched: boolean;
   InputProps?:
     | Partial<FilledInputProps>
     | Partial<OutlinedInputProps>
@@ -26,14 +25,13 @@ export type TIProps = {
 const TextInput: FC<TIProps> = ({
   type,
   label,
-  value,
-  error,
-  unTouched,
+  inputField,
   fullWidth = false,
   autoComplete,
   InputProps,
   onchange,
 }) => {
+  const { value, error, unTouched } = inputField;
   return (
     <TextField
       fullWidth={fullWidth}

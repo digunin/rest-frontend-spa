@@ -23,9 +23,7 @@ const Login = () => {
           fullWidth
           autoComplete="login"
           label={label_text.login}
-          error={username.error}
-          value={username.value}
-          unTouched={username.unTouched}
+          inputField={username}
           validateHelpers={[notEmpty]}
           onchange={(value, error) => {
             handleChange("username", value, error);
@@ -34,9 +32,7 @@ const Login = () => {
         <PasswordInput
           fullWidth
           label={label_text.password}
-          error={password.error}
-          value={password.value}
-          unTouched={password.unTouched}
+          inputField={password}
           validateHelpers={[notEmpty]}
           onchange={(value, error) => {
             handleChange("password", value, error);

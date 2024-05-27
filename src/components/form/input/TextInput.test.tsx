@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TextInput, { TIProps } from "./TextInput";
+import { InputField } from "../../../store/form/types";
 
 export const MUI_helper_text_class = "MuiFormHelperText-root";
 
@@ -24,15 +25,25 @@ export const checkFalsyTextRender = (
   );
 };
 
-describe("TextInput test", () => {
-  let defaultProps: TIProps = {
-    label: "text input",
-    value: "initial-value",
-    error: "",
-    unTouched: true,
-    onchange: jest.fn,
-  };
+export const defaultProps: TIProps = {
+  label: "text input",
+  inputField: { value: "initial-value", error: "", unTouched: true },
+  onchange: jest.fn,
+};
 
+export const createInputField = (
+  value?: string | null,
+  error?: string | null,
+  untouched?: boolean
+): InputField => {
+  return {
+    value: value || defaultProps.inputField.value,
+    error: error || defaultProps.inputField.error,
+    unTouched: untouched ?? defaultProps.inputField.unTouched,
+  };
+};
+
+describe("TextInput test", () => {
   const error_text = "error";
   const label_text = "label-text";
   const value_text = "some-value";
@@ -40,35 +51,50 @@ describe("TextInput test", () => {
 
   test("default props render", () => {
     render(<TextInput {...defaultProps} />);
-    checkFalsyTextRender(defaultProps.value, defaultProps.label);
+    checkFalsyTextRender(defaultProps.inputField.value, defaultProps.label);
   });
 
   test("label render", () => {
     render(<TextInput {...defaultProps} label={label_text} />);
-    checkFalsyTextRender(defaultProps.value, label_text);
+    checkFalsyTextRender(defaultProps.inputField.value, label_text);
   });
 
   test("value render", () => {
-    render(<TextInput {...defaultProps} value={value_text} />);
+    render(
+      <TextInput {...defaultProps} inputField={createInputField(value_text)} />
+    );
     checkFalsyTextRender(value_text, defaultProps.label);
   });
 
   test("error render", () => {
-    render(<TextInput {...defaultProps} error={error_text} />);
+    render(
+      <TextInput
+        {...defaultProps}
+        inputField={createInputField(null, error_text)}
+      />
+    );
     expect(screen.queryByText(error_text)).toBeFalsy();
-    checkFalsyTextRender(defaultProps.value, defaultProps.label);
+    checkFalsyTextRender(defaultProps.inputField.value, defaultProps.label);
   });
 
   test("error render, unTouched = false", () => {
     render(
-      <TextInput {...defaultProps} error={error_text} unTouched={false} />
+      <TextInput
+        {...defaultProps}
+        inputField={createInputField(null, error_text, false)}
+      />
     );
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
-    checkFalsyTextRender(defaultProps.value, defaultProps.label);
+    checkFalsyTextRender(defaultProps.inputField.value, defaultProps.label);
   });
 
   test("value, error render", () => {
-    render(<TextInput {...defaultProps} value={value_text} error={"error"} />);
+    render(
+      <TextInput
+        {...defaultProps}
+        inputField={createInputField(value_text, "error")}
+      />
+    );
     expect(screen.queryByText(error_text)).toBeFalsy();
     checkFalsyTextRender(value_text, defaultProps.label);
   });
@@ -77,9 +103,7 @@ describe("TextInput test", () => {
     render(
       <TextInput
         {...defaultProps}
-        value={value_text}
-        error={error_text}
-        unTouched={false}
+        inputField={createInputField(value_text, error_text, false)}
       />
     );
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
