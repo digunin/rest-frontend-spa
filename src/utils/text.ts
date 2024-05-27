@@ -12,4 +12,5 @@ export const error_messages = {
 export const label_text = {
   login: "Логин",
   password: "Пароль",
+  app_bar_title: "База данных",
 };

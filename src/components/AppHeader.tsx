@@ -9,6 +9,7 @@ import { setUser } from "../store/userSlice";
 import { useAuth } from "../hooks/useAuth";
 import { useAppDispatch } from "../store";
 import { APP_BAR_HEIGHT } from "../utils/css-var";
+import { label_text } from "../utils/text";
 
 const AppHeader = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +24,7 @@ const AppHeader = () => {
           }}
         >
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            База данных
+            {label_text.app_bar_title}
           </Typography>
           {isAuth && (
             <>
