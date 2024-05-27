@@ -9,7 +9,8 @@ import {
 import { mocked_read_response_data } from "../utils/mock.fetch";
 import { error_messages } from "../utils/text";
 
-const delay = 500;
+const delay = process.env.NODE_ENV === "test" ? 0 : 500;
+
 export const fakeToken = "fake-token";
 export const fakeCredentials: Credentials = {
   username: "user",
