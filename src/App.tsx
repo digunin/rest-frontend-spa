@@ -4,16 +4,21 @@ import Login from "./components/form/Login";
 import { useAppInit } from "./hooks/useAppInit";
 import Database from "./components/Database";
 import { useErrorsDisplay } from "./hooks/useErrorsDisplay";
+import AppHeader from "./components/AppHeader";
+import { APP_BAR_HEIGHT } from "./utils/css-var";
 
 function App() {
   const { isAuth } = useAppInit();
   useErrorsDisplay();
 
   return (
-    <Container id="app" maxWidth="md">
-      {!isAuth && <Login />}
-      {isAuth && <Database />}
-    </Container>
+    <>
+      <AppHeader />
+      <Container id="app" maxWidth="md" sx={{ mt: `${APP_BAR_HEIGHT}px` }}>
+        {!isAuth && <Login />}
+        {isAuth && <Database />}
+      </Container>
+    </>
   );
 }
 
