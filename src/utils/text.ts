@@ -7,6 +7,7 @@ export const error_messages = {
   notEmpty: "Поле не должно быть пустым",
   accessDeny: "Access deny",
   signIn: "Неверный логин или пароль",
+  authFailed: "Требуется авторизация",
 };
 
 export const label_text = {
