@@ -24,6 +24,7 @@ export type JSONResponse<TResp> = {
 };
 
 export type NetworkStatus = "loading" | "idle" | "failed";
+export type NetworkInteracting = { status: NetworkStatus; error: string };
 
 export type CRUD_API = {
   login: (credentials: Credentials) => Promise<Token>;

@@ -1,15 +1,13 @@
-import { NetworkStatus } from "./../api/types";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Credentials } from "../api/types";
 import api from "../api";
+import { NetworkInteracting } from "./../api/types";
 import { error_messages } from "../utils/text";
 
 export type UserState = {
   username: string | null;
   token: string | null;
-  status: NetworkStatus;
-  error: string;
-};
+} & NetworkInteracting;
 
 const initialState: UserState = {
   username: null,
