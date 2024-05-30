@@ -62,6 +62,17 @@ export const mocked_single_record: SingleRecord = {
   employeeSignatureName: "Приказ 2.sig",
 };
 
+export const emptySingleRecord = {
+  companySigDate: "",
+  companySignatureName: "",
+  documentName: "",
+  documentStatus: "",
+  documentType: "",
+  employeeNumber: "",
+  employeeSigDate: "",
+  employeeSignatureName: "",
+};
+
 export const mocked_read_response_data: ResponsedSingleRecord[] = [
   {
     companySigDate: "2022-12-23T11:19:27.017Z",

@@ -19,6 +19,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { createColumnsWithActions } from "./columns";
 import { RecordID } from "../../../api/types";
+import { emptySingleRecord } from "../../../utils/mock.fetch";
+import { nanoid } from "nanoid";
 
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
@@ -50,7 +52,7 @@ export const useDataGrid = (data: DatabaseData) => {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    removeRow(id as RecordID);
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
@@ -60,9 +62,9 @@ export const useDataGrid = (data: DatabaseData) => {
     });
 
     const editedRow = newRows.find((row) => row.id === id);
-    // if (editedRow!.isNew) {
-    //   setRows(rows.filter((row) => row.id !== id));
-    // }
+    if (editedRow) {
+      removeRow(id as RecordID);
+    }
   };
 
   const processRowUpdate = (newRow: GridRowModel) => {
@@ -73,6 +75,23 @@ export const useDataGrid = (data: DatabaseData) => {
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
+  };
+
+  const handleAddNewRow = () => {
+    const newRow = {
+      id: nanoid(),
+      ...emptySingleRecord,
+      companySigDate: new Date().toISOString(),
+      employeeSigDate: new Date().toISOString(),
+    };
+    addNewRow(newRow);
+    setRowModesModel((oldModel) => ({
+      ...oldModel,
+      [newRow.id]: {
+        mode: GridRowModes.Edit,
+        fieldToFocus: "employeeNumber",
+      },
+    }));
   };
 
   const addNewRow = (newRow: DatabaseRow) => {
@@ -136,7 +155,13 @@ export const useDataGrid = (data: DatabaseData) => {
     handleRowEditStop,
     processRowUpdate,
     handleRowModesModelChange,
+    handleAddNewRow,
   };
 
-  return { rows, setRows, rowModesModel, setRowModesModel, columns, handlers };
+  return {
+    rows,
+    rowModesModel,
+    columns,
+    handlers,
+  };
 };

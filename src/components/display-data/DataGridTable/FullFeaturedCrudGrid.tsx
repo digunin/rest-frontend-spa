@@ -6,8 +6,13 @@ import DataGridToolbar from "./DataGridToolbar";
 import { useDataGrid } from "./useDataGrid";
 
 const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
-  const { rows, setRows, rowModesModel, setRowModesModel, columns, handlers } =
-    useDataGrid(data);
+  const { rows, rowModesModel, columns, handlers } = useDataGrid(data);
+  const {
+    handleAddNewRow,
+    handleRowEditStop,
+    handleRowModesModelChange,
+    processRowUpdate,
+  } = handlers;
 
   return (
     <Box
@@ -27,14 +32,14 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
-        onRowModesModelChange={handlers.handleRowModesModelChange}
-        onRowEditStop={handlers.handleRowEditStop}
-        processRowUpdate={handlers.processRowUpdate}
+        onRowModesModelChange={handleRowModesModelChange}
+        onRowEditStop={handleRowEditStop}
+        processRowUpdate={processRowUpdate}
         slots={{
           toolbar: DataGridToolbar as GridSlots["toolbar"],
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { handleAddNewRow },
         }}
         initialState={{
           pagination: { paginationModel: { pageSize: 5 } },
