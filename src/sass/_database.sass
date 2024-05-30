@@ -1,0 +1,7 @@
+.MuiDataGrid-root
+    .MuiDataGrid-cell
+        &:has(.Mui-error)
+            &.MuiDataGrid-cell.MuiDataGrid-cell--editing
+                &:focus-within
+                    outline-color: red
+                border: 1px solid red

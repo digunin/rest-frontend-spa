@@ -12,7 +12,7 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
   return (
     <Box
       sx={{
-        height: 500,
+        minHeight: 430,
         width: "100%",
         "& .actions": {
           color: "text.secondary",
@@ -36,6 +36,11 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
         slotProps={{
           toolbar: { setRows, setRowModesModel },
         }}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 5 } },
+        }}
+        pageSizeOptions={[5, 10, 25, 50, 100]}
+        sx={{ p: 1 }}
       />
     </Box>
   );

@@ -15,3 +15,14 @@ export const label_text = {
   password: "Пароль",
   app_bar_title: "База данных",
 };
+
+export const databaseColumnNames = {
+  employeeNumber: "employee number",
+  employeeSigDate: "employee signature date",
+  documentStatus: "document status",
+  documentType: "document type",
+  documentName: "document name",
+  companySigDate: "company signature date",
+  companySignatureName: "company signature name",
+  employeeSignatureName: "employee signature name",
+};
