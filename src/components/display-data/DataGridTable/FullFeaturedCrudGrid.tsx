@@ -6,7 +6,7 @@ import DataGridToolbar from "./DataGridToolbar";
 import { useDataGrid } from "./useDataGrid";
 
 const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
-  const { rows, rowModesModel, columns, handlers } = useDataGrid(data);
+  const { rows, rowModesModel, columns, handlers, apiRef } = useDataGrid(data);
   const {
     handleAddNewRow,
     handleRowEditStop,
@@ -43,9 +43,11 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
         }}
         initialState={{
           pagination: { paginationModel: { pageSize: 5 } },
+          sorting: { sortModel: [{ field: "employeeSigDate", sort: "desc" }] },
         }}
         pageSizeOptions={[5, 10, 25, 50, 100]}
         sx={{ p: 1 }}
+        apiRef={apiRef}
       />
     </Box>
   );

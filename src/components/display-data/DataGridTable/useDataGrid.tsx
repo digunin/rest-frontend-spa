@@ -12,6 +12,7 @@ import {
   GridRowModel,
   GridRowModes,
   GridRowModesModel,
+  useGridApiRef,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
@@ -32,13 +33,15 @@ export const useDataGrid = (data: DatabaseData) => {
   // когда есть хоть одна созданная, но не сохраненная
   const [newRows, setNewRows] = useState<DatabaseData>([]);
 
+  const apiRef = useGridApiRef();
+
   useEffect(() => setRows([...data, ...newRows]), [data]);
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
     event
   ) => {
-      event.defaultMuiPrevented = true;
+    event.defaultMuiPrevented = true;
     switch (params.reason) {
       case GridRowEditStopReasons.escapeKeyDown:
         handleCancelClick(params.id)();
@@ -97,6 +100,8 @@ export const useDataGrid = (data: DatabaseData) => {
         fieldToFocus: "employeeNumber",
       },
     }));
+    apiRef.current.setPage(0);
+    apiRef.current.sortColumn("companySigDate", "desc");
   };
 
   const addNewRow = (newRow: DatabaseRow) => {
@@ -168,5 +173,6 @@ export const useDataGrid = (data: DatabaseData) => {
     rowModesModel,
     columns,
     handlers,
+    apiRef,
   };
 };
