@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { DatabaseData } from "../../../store/database/databaseSlice";
+import {
+  DatabaseData,
+  DatabaseRow,
+} from "../../../store/database/databaseSlice";
 import {
   GridActionsCellItem,
   GridColDef,
@@ -15,12 +18,19 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { createColumnsWithActions } from "./columns";
+import { RecordID } from "../../../api/types";
 
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
-  useEffect(() => setRows(data), [data]);
+  // newRows - массив копий свежесозданных строк,
+  // которые еще не сохранены в redux-store.
+  // Не нужен, если запретить создавать новые строки,
+  // когда есть хоть одна созданная, но не сохраненная
+  const [newRows, setNewRows] = useState<DatabaseData>([]);
+
+  useEffect(() => setRows([...data, ...newRows]), [data]);
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
@@ -49,7 +59,7 @@ export const useDataGrid = (data: DatabaseData) => {
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
 
-    const editedRow = rows.find((row) => row.id === id);
+    const editedRow = newRows.find((row) => row.id === id);
     // if (editedRow!.isNew) {
     //   setRows(rows.filter((row) => row.id !== id));
     // }
@@ -63,6 +73,16 @@ export const useDataGrid = (data: DatabaseData) => {
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
+  };
+
+  const addNewRow = (newRow: DatabaseRow) => {
+    setNewRows((prev) => [...prev, newRow]);
+    setRows((prev) => [...prev, newRow]);
+  };
+
+  const removeRow = (id: RecordID) => {
+    setNewRows((prev) => prev.filter((row) => row.id !== id));
+    setRows((prev) => prev.filter((row) => row.id !== id));
   };
 
   const columns: GridColDef[] = createColumnsWithActions({
