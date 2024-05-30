@@ -20,55 +20,8 @@ import {
   GridRowEditStopReasons,
   GridSlots,
 } from "@mui/x-data-grid";
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-} from "@mui/x-data-grid-generator";
-
-const roles = ["Market", "Finance", "Development"];
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
-
-const initialRows: GridRowsProp = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-];
+import { DatabaseData } from "../../../store/database/databaseSlice";
+import { nanoid } from "nanoid";
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -81,7 +34,7 @@ function EditToolbar(props: EditToolbarProps) {
   const { setRows, setRowModesModel } = props;
 
   const handleClick = () => {
-    const id = randomId();
+    const id = nanoid();
     setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
@@ -98,11 +51,13 @@ function EditToolbar(props: EditToolbarProps) {
   );
 }
 
-export default function FullFeaturedCrudGrid() {
-  const [rows, setRows] = React.useState(initialRows);
+export default function FullFeaturedCrudGrid({ data }: { data: DatabaseData }) {
+  const [rows, setRows] = React.useState<DatabaseData>([]);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   );
+
+  React.useEffect(() => setRows(data), [data]);
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
@@ -132,14 +87,14 @@ export default function FullFeaturedCrudGrid() {
     });
 
     const editedRow = rows.find((row) => row.id === id);
-    if (editedRow!.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
+    // if (editedRow!.isNew) {
+    //   setRows(rows.filter((row) => row.id !== id));
+    // }
   };
 
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
@@ -148,30 +103,45 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", width: 180, editable: true },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 80,
-      align: "left",
-      headerAlign: "left",
+      field: "employeeNumber",
+      headerName: "employeeNumber",
       editable: true,
     },
     {
-      field: "joinDate",
-      headerName: "Join date",
-      type: "date",
-      width: 180,
+      field: "employeeSigDate",
+      headerName: "employeeSigDate",
       editable: true,
     },
     {
-      field: "role",
-      headerName: "Department",
-      width: 220,
+      field: "documentType",
+      headerName: "documentType",
       editable: true,
-      type: "singleSelect",
-      valueOptions: ["Market", "Finance", "Development"],
+    },
+    {
+      field: "documentName",
+      headerName: "documentName",
+      editable: true,
+    },
+    {
+      field: "documentStatus",
+      headerName: "documentStatus",
+      editable: true,
+    },
+    {
+      field: "companySigDate",
+      headerName: "companySigDate",
+      editable: true,
+    },
+    {
+      field: "employeeSignatureName",
+      headerName: "employeeSignatureName",
+      editable: true,
+    },
+    {
+      field: "companySignatureName",
+      headerName: "companySignatureName",
+      editable: true,
     },
     {
       field: "actions",
