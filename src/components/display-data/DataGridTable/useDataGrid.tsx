@@ -38,8 +38,13 @@ export const useDataGrid = (data: DatabaseData) => {
     params,
     event
   ) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
+    switch (params.reason) {
+      case GridRowEditStopReasons.escapeKeyDown:
+        handleCancelClick(params.id)();
+        break;
+      case GridRowEditStopReasons.enterKeyDown:
+        handleSaveClick(params.id)();
     }
   };
 
