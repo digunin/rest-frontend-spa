@@ -12,6 +12,7 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
     handleRowEditStop,
     handleRowModesModelChange,
     processRowUpdate,
+    onProcessRowUpdateError,
   } = handlers;
 
   return (
@@ -35,6 +36,7 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
+        onProcessRowUpdateError={onProcessRowUpdateError}
         slots={{
           toolbar: DataGridToolbar as GridSlots["toolbar"],
         }}

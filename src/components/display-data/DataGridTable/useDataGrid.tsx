@@ -22,10 +22,12 @@ import { createColumnsWithActions } from "./columns";
 import { RecordID } from "../../../api/types";
 import { emptySingleRecord } from "../../../utils/mock.fetch";
 import { nanoid } from "nanoid";
+import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+  const { showSnackbar } = useAppSnackbar();
 
   // newRows - массив копий свежесозданных строк,
   // которые еще не сохранены в redux-store.
@@ -75,10 +77,13 @@ export const useDataGrid = (data: DatabaseData) => {
     }
   };
 
-  const processRowUpdate = (newRow: GridRowModel) => {
-    const updatedRow = { ...newRow, isNew: false };
-    // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
+  const processRowUpdate = (newRow: GridRowModel<DatabaseRow>) => {
+    if (newRow.employeeNumber) return newRow;
+    return Promise.reject('Поле "employeeNumber" не может быть пустым');
+  };
+
+  const onProcessRowUpdateError = (error: string) => {
+    showSnackbar(error);
   };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
@@ -166,6 +171,7 @@ export const useDataGrid = (data: DatabaseData) => {
     processRowUpdate,
     handleRowModesModelChange,
     handleAddNewRow,
+    onProcessRowUpdateError,
   };
 
   return {
