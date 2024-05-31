@@ -5,13 +5,14 @@ import { loadData } from "../store/database/databaseSlice";
 
 export const useAppDatabase = () => {
   const dispatch = useAppDispatch();
-  const { token } = useAuth();
+  const { isAuth, token } = useAuth();
   const data = useAppSelector((state) => state.databaseState.data);
-  const loading = useAppSelector((state) => state.databaseState.status);
+  const { status, error } = useAppSelector((state) => state.databaseState);
 
   useEffect(() => {
+    if (!isAuth) return;
     dispatch(loadData(token as string));
   }, []);
 
-  return { data, loading: loading === "loading" };
+  return { data, error, loading: status === "loading" };
 };

@@ -1,19 +1,15 @@
-import { closeSnackbar, useSnackbar } from "notistack";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSignIn } from "./useSignIn";
-import SnackbarCloseButton from "../components/SnackbarCloseButton";
+import { useAppDatabase } from "./useAppDatabase";
+import { useAppSnackbar } from "./useAppSnackbar";
 
 export const useErrorsDisplay = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const { error } = useSignIn();
+  const { showSnackbar } = useAppSnackbar();
+  const { error: userError } = useSignIn();
+  const { error: dataError } = useAppDatabase();
 
   useEffect(() => {
-    if (!error) return;
-    enqueueSnackbar(error, {
-      variant: "error",
-      action: (key) => (
-        <SnackbarCloseButton onclose={() => closeSnackbar(key)} />
-      ),
-    });
-  }, [error]);
+    if (userError) showSnackbar(userError);
+    if (dataError) showSnackbar(dataError);
+  }, [userError, dataError]);
 };
