@@ -8,6 +8,7 @@ export const error_messages = {
   accessDeny: "Access deny",
   signIn: "Неверный логин или пароль",
   authFailed: "Требуется авторизация",
+  documentNotFound: "Document not found",
 };
 
 export const label_text = {

@@ -12,7 +12,7 @@ import * as Cookie from "./utils/cookies-api";
 import { label_text } from "./utils/text";
 import { fakeCredentials, fakeToken } from "./api/fake-crudAPI";
 
-const DELAY = 1000;
+const DELAY = 1500;
 
 describe("App testing", () => {
   const spyGetCookie = jest.spyOn(Cookie, "getCookies");

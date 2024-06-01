@@ -108,6 +108,7 @@ export const useDataGrid = (data: DatabaseData) => {
 
   const processRowUpdate = useCallback(
     (newRow: GridRowModel<DatabaseRow>) => {
+      let returnedRow = newRow;
       const id = newRow.id;
       let error = "";
       if (!newRow.employeeNumber) {
@@ -117,17 +118,21 @@ export const useDataGrid = (data: DatabaseData) => {
       if (creatingRow) {
         dispatch(sendRow({ row: newRow, token: token as string }))
           .unwrap()
-          .then(() => {
+          .then((row) => {
+            returnedRow = row;
             removeRow(id);
           })
           .catch((err) => (error = err));
       } else {
         dispatch(sendRow({ row: newRow, token: token as string, id }))
           .unwrap()
+          .then((row) => {
+            returnedRow = row;
+          })
           .catch((err) => (error = err));
       }
       if (error) return Promise.reject();
-      return newRow;
+      return returnedRow;
     },
     [token, newRows, dispatch]
   );

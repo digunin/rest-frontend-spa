@@ -109,6 +109,9 @@ const databaseSlice = createSlice({
     });
     builder.addCase(deleteRow.rejected, (state, action) => {
       state.status = "failed";
+      if (action.error.message === error_messages.documentNotFound) {
+        state.data = state.data.filter((row) => row.id !== action.meta.arg.id);
+      }
       state.error = getErrorMessage(action.error.message || "");
     });
     builder.addCase(deleteRow.fulfilled, (state, action) => {
