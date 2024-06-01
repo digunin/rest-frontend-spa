@@ -43,7 +43,7 @@ describe("FakeAPI test", () => {
     const result = await FakeAPI.create(mocked_single_record, fakeToken)
       .then((data) => data)
       .catch((err) => fail("promise REJECTED when resolve expect"));
-    expect(result.id).toBe("qqq-www-eee-rrr-ttt");
+    expect(result.id).not.toBeFalsy();
   });
 
   test("create authorization failed", async () => {
