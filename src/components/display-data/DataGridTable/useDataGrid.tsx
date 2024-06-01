@@ -68,9 +68,11 @@ export const useDataGrid = (data: DatabaseData) => {
   const handleDeleteClick = useCallback(
     (id: GridRowId) => () => {
       dispatch(setIsOverlayShow(true));
-      dispatch(deleteRow({ id: id as RecordID, token: token as string })).catch(
-        () => dispatch(setIsOverlayShow(false))
-      );
+      dispatch(deleteRow({ id: id as RecordID, token: token as string }))
+        .unwrap()
+        .catch(() => {
+          dispatch(setIsOverlayShow(false));
+        });
     },
     [dispatch]
   );
@@ -114,14 +116,15 @@ export const useDataGrid = (data: DatabaseData) => {
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {
         dispatch(sendRow({ row: newRow, token: token as string }))
+          .unwrap()
           .then(() => {
             removeRow(id);
           })
           .catch((err) => (error = err));
       } else {
-        dispatch(sendRow({ row: newRow, token: token as string, id })).catch(
-          (err) => (error = err)
-        );
+        dispatch(sendRow({ row: newRow, token: token as string, id }))
+          .unwrap()
+          .catch((err) => (error = err));
       }
       if (error) return Promise.reject();
       return newRow;
