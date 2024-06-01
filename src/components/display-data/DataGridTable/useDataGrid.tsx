@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   DatabaseData,
   DatabaseRow,
+  sendRow,
 } from "../../../store/database/databaseSlice";
 import {
   GridActionsCellItem,
@@ -23,11 +24,15 @@ import { RecordID } from "../../../api/types";
 import { emptySingleRecord } from "../../../utils/mock.fetch";
 import { nanoid } from "nanoid";
 import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
+import { useAppDispatch } from "../../../store";
+import { useAuth } from "../../../hooks/useAuth";
 
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const { showSnackbar } = useAppSnackbar();
+  const dispatch = useAppDispatch();
+  const { token } = useAuth();
 
   // newRows - массив копий свежесозданных строк,
   // которые еще не сохранены в redux-store.
@@ -78,8 +83,25 @@ export const useDataGrid = (data: DatabaseData) => {
   };
 
   const processRowUpdate = (newRow: GridRowModel<DatabaseRow>) => {
-    if (newRow.employeeNumber) return newRow;
+    const id = newRow.id;
+    let error = "";
+    if (!newRow.employeeNumber) {
     return Promise.reject('Поле "employeeNumber" не может быть пустым');
+    }
+    const creatingRow = newRows.find((row) => row.id === id);
+    if (creatingRow) {
+      dispatch(sendRow({ row: newRow, token: token as string }))
+        .then(() => {
+          removeRow(id);
+        })
+        .catch((err) => (error = err));
+    } else {
+      dispatch(sendRow({ row: newRow, token: token as string, id })).catch(
+        (err) => (error = err)
+      );
+    }
+    if (error) return Promise.reject();
+    return newRow;
   };
 
   const onProcessRowUpdateError = (error: string) => {

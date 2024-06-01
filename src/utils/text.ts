@@ -14,6 +14,7 @@ export const label_text = {
   login: "Логин",
   password: "Пароль",
   app_bar_title: "База данных",
+  addNewRecord: "Добавить запись",
 };
 
 export const databaseColumnNames = {

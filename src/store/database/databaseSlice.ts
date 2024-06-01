@@ -34,14 +34,17 @@ type SendRowProps = {
 export const sendRow = createAsyncThunk(
   "data/send",
   async ({ token, row, id }: SendRowProps) => {
-    return id ? api.update(row, id, token) : api.create(row, token);
+    row = fixBeforeSending(row);
+    return id
+      ? api.update(row, id, token).catch((err) => Promise.reject(err))
+      : api.create(row, token).catch((err) => Promise.reject(err));
   }
 );
 
 export const deleteRow = createAsyncThunk(
   "data/delete",
   async ({ token, id }: Required<Omit<SendRowProps, "row">>) => {
-    return api.delete(id, token);
+    return api.delete(id, token).catch((err) => Promise.reject(err));
   }
 );
 
@@ -49,6 +52,13 @@ const getErrorMessage = (error: string) => {
   return error === error_messages.accessDeny
     ? error_messages.authFailed
     : error;
+};
+
+const fixBeforeSending = (row: SingleRecord): SingleRecord => {
+  const { companySigDate, employeeSigDate } = row;
+  row.companySigDate = new Date(companySigDate).toISOString();
+  row.employeeSigDate = new Date(employeeSigDate).toISOString();
+  return row;
 };
 
 const databaseSlice = createSlice({
@@ -102,6 +112,8 @@ const databaseSlice = createSlice({
       state.error = getErrorMessage(action.error.message || "");
     });
     builder.addCase(deleteRow.fulfilled, (state, action) => {
+      state.status = "idle";
+      state.error = "";
       const { id } = action.meta.arg;
       state.data = state.data.filter((row) => row.id !== id);
     });
