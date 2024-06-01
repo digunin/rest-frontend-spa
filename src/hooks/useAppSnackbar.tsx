@@ -8,6 +8,7 @@ export const useAppSnackbar = () => {
     message: string,
     variant?: "default" | "error" | "success" | "warning" | "info"
   ) => {
+    if (!message) return;
     enqueueSnackbar(message, {
       variant: variant || "error",
       action: (key) => (

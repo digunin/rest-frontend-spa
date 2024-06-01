@@ -4,12 +4,12 @@ import { useAppDatabase } from "../hooks/useAppDatabase";
 import { Paper } from "@mui/material";
 
 const AppDatabase = () => {
-  const { data } = useAppDatabase();
+  const { data, loading } = useAppDatabase();
 
   return (
     <>
       <Paper>
-        <Database data={data} />
+        <Database data={data} loading={loading} />
       </Paper>
     </>
   );

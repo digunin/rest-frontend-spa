@@ -5,7 +5,9 @@ import { DatabaseData } from "../../../store/database/databaseSlice";
 import DataGridToolbar from "./DataGridToolbar";
 import { useDataGrid } from "./useDataGrid";
 
-const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
+type CrudDataGrid = { data: DatabaseData; loading: boolean };
+
+const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
   const { rows, rowModesModel, columns, handlers, apiRef } = useDataGrid(data);
   const {
     handleAddNewRow,
@@ -18,7 +20,7 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
   return (
     <Box
       sx={{
-        minHeight: 430,
+        minHeight: 450,
         width: "100%",
         "& .actions": {
           color: "text.secondary",
@@ -48,8 +50,9 @@ const FullFeaturedCrudGrid = ({ data }: { data: DatabaseData }) => {
           sorting: { sortModel: [{ field: "employeeSigDate", sort: "desc" }] },
         }}
         pageSizeOptions={[5, 10, 25, 50, 100]}
-        sx={{ p: 1 }}
+        sx={{ minHeight: 450, p: 1 }}
         apiRef={apiRef}
+        loading={loading}
       />
     </Box>
   );

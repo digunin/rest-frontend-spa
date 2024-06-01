@@ -96,7 +96,7 @@ export const useDataGrid = (data: DatabaseData) => {
     const id = newRow.id;
     let error = "";
     if (!newRow.employeeNumber) {
-    return Promise.reject('Поле "employeeNumber" не может быть пустым');
+      return Promise.reject('Поле "employeeNumber" не может быть пустым');
     }
     const creatingRow = newRows.find((row) => row.id === id);
     if (creatingRow) {
