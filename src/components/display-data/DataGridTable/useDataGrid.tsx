@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   DatabaseData,
   DatabaseRow,
+  deleteRow,
   sendRow,
 } from "../../../store/database/databaseSlice";
 import {
@@ -67,7 +68,7 @@ export const useDataGrid = (data: DatabaseData) => {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    removeRow(id as RecordID);
+    dispatch(deleteRow({ id: id as RecordID, token: token as string }));
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
