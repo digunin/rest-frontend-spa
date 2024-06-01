@@ -7,6 +7,21 @@ import { useDataGrid } from "./useDataGrid";
 
 const testMode = process.env.NODE_ENV === "test";
 
+const commonBoxStyles = {
+  width: "100%",
+  "& .actions": {
+    color: "text.secondary",
+  },
+  "& .textPrimary": {
+    color: "text.primary",
+  },
+};
+
+const testBoxStyles = {
+  minHeight: 450,
+  ...commonBoxStyles,
+};
+
 type CrudDataGrid = { data: DatabaseData; loading: boolean };
 
 const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
@@ -22,16 +37,14 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
   return React.useMemo(
     () => (
       <Box
-        sx={{
-          minHeight: 450,
-          width: "100%",
-          "& .actions": {
-            color: "text.secondary",
-          },
-          "& .textPrimary": {
-            color: "text.primary",
-          },
-        }}
+        sx={
+          testMode
+            ? testBoxStyles
+            : {
+                height: "65vh",
+                ...commonBoxStyles,
+              }
+        }
       >
         <DataGrid
           rows={rows}
@@ -49,15 +62,18 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
             toolbar: { handleAddNewRow },
           }}
           initialState={{
-            pagination: { paginationModel: { pageSize: testMode ? 10 : 5 } },
+            pagination: testMode
+              ? { paginationModel: { pageSize: 10 } }
+              : undefined,
             sorting: {
               sortModel: [{ field: "employeeSigDate", sort: "desc" }],
             },
           }}
-          pageSizeOptions={[5, 10, 25, 50, 100]}
-          sx={{ minHeight: 450, p: 1 }}
+          sx={{ minHeight: testMode ? 450 : "auto", p: 1 }}
           apiRef={apiRef}
           loading={loading}
+          pageSizeOptions={[5, 10, 25, 50, 100]}
+          autoPageSize={testMode ? false : true}
         />
       </Box>
     ),

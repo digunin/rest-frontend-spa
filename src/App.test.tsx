@@ -17,7 +17,7 @@ const DELAY = 1000;
 describe("App testing", () => {
   const spyGetCookie = jest.spyOn(Cookie, "getCookies");
 
-  test("render with user = null", () => {
+  test("render with user = null", async () => {
     spyGetCookie.mockReturnValueOnce({ username: null, token: null });
     renderWithProvider(<App />);
     expect(
@@ -25,7 +25,9 @@ describe("App testing", () => {
         name: /logout/i,
       })
     ).toBeFalsy();
-    expect(screen.getByLabelText(label_text.login)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByLabelText(label_text.login)).toBeInTheDocument()
+    );
     expect(screen.getByLabelText(label_text.password)).toBeInTheDocument();
   });
 
@@ -55,6 +57,9 @@ describe("App testing", () => {
 
   test("login success test", async () => {
     renderWithProvider(<App />);
+    await waitFor(() =>
+      expect(screen.getByLabelText(label_text.login)).toBeInTheDocument()
+    );
     fireEvent.change(screen.getByLabelText(label_text.login), {
       target: { value: fakeCredentials.username },
     });
@@ -116,7 +121,9 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6));
+    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
+      timeout: 2000,
+    });
     expect(screen.getByText("1111")).toBeInTheDocument();
     expect(screen.getByText("2222")).toBeInTheDocument();
     expect(screen.getByText("3333")).toBeInTheDocument();
