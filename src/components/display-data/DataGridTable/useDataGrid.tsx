@@ -27,6 +27,7 @@ import { nanoid } from "nanoid";
 import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
 import { useAuth } from "../../../hooks/useAuth";
+import { setIsOverlayShow } from "../../../store/overlaySlice";
 
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
@@ -44,6 +45,11 @@ export const useDataGrid = (data: DatabaseData) => {
   const apiRef = useGridApiRef();
 
   useEffect(() => setRows([...data, ...newRows]), [data]);
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch(setIsOverlayShow(false));
+    });
+  }, [data]);
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
@@ -68,7 +74,10 @@ export const useDataGrid = (data: DatabaseData) => {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    dispatch(deleteRow({ id: id as RecordID, token: token as string }));
+    dispatch(setIsOverlayShow(true));
+    dispatch(deleteRow({ id: id as RecordID, token: token as string })).catch(
+      () => dispatch(setIsOverlayShow(false))
+    );
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
