@@ -5,6 +5,8 @@ import { DatabaseData } from "../../../store/database/databaseSlice";
 import DataGridToolbar from "./DataGridToolbar";
 import { useDataGrid } from "./useDataGrid";
 
+const testMode = process.env.NODE_ENV === "test";
+
 type CrudDataGrid = { data: DatabaseData; loading: boolean };
 
 const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
@@ -17,44 +19,61 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
     onProcessRowUpdateError,
   } = handlers;
 
-  return (
-    <Box
-      sx={{
-        minHeight: 450,
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-      }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        onProcessRowUpdateError={onProcessRowUpdateError}
-        slots={{
-          toolbar: DataGridToolbar as GridSlots["toolbar"],
+  return React.useMemo(
+    () => (
+      <Box
+        sx={{
+          minHeight: 450,
+          width: "100%",
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
         }}
-        slotProps={{
-          toolbar: { handleAddNewRow },
-        }}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 5 } },
-          sorting: { sortModel: [{ field: "employeeSigDate", sort: "desc" }] },
-        }}
-        pageSizeOptions={[5, 10, 25, 50, 100]}
-        sx={{ minHeight: 450, p: 1 }}
-        apiRef={apiRef}
-        loading={loading}
-      />
-    </Box>
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={handleRowModesModelChange}
+          onRowEditStop={handleRowEditStop}
+          processRowUpdate={processRowUpdate}
+          onProcessRowUpdateError={onProcessRowUpdateError}
+          slots={{
+            toolbar: DataGridToolbar as GridSlots["toolbar"],
+          }}
+          slotProps={{
+            toolbar: { handleAddNewRow },
+          }}
+          initialState={{
+            pagination: { paginationModel: { pageSize: testMode ? 10 : 5 } },
+            sorting: {
+              sortModel: [{ field: "employeeSigDate", sort: "desc" }],
+            },
+          }}
+          pageSizeOptions={[5, 10, 25, 50, 100]}
+          sx={{ minHeight: 450, p: 1 }}
+          apiRef={apiRef}
+          loading={loading}
+        />
+      </Box>
+    ),
+    [
+      data,
+      loading,
+      rows,
+      rowModesModel,
+      columns,
+      apiRef,
+      handleAddNewRow,
+      handleRowEditStop,
+      handleRowModesModelChange,
+      processRowUpdate,
+      onProcessRowUpdateError,
+    ]
   );
 };
 

@@ -8,6 +8,7 @@ import {
 } from "./types";
 import { mocked_read_response_data } from "../utils/mock.fetch";
 import { error_messages } from "../utils/text";
+import { nanoid } from "nanoid";
 
 const delay = process.env.NODE_ENV === "test" ? 0 : 500;
 
@@ -46,7 +47,7 @@ export const FakeAPI: CRUD_API = {
     return new Promise((res, rej) => {
       setTimeout(() => {
         if (token === fakeToken) {
-          res({ ...record, id: "qqq-www-eee-rrr-ttt" });
+          res({ ...record, id: nanoid() });
         } else rej(error_messages.accessDeny);
       }, delay);
     });

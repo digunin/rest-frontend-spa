@@ -8,11 +8,7 @@ import {
 } from "@mui/x-data-grid";
 import { databaseColumnNames } from "../../../utils/text";
 
-export const createColumnsWithActions = (actions: GridColDef): GridColDef[] => {
-  return [...columns, actions];
-};
-
-const columns: GridColDef[] = [
+export const columnsDef: GridColDef[] = [
   {
     field: "employeeNumber",
     type: "number",

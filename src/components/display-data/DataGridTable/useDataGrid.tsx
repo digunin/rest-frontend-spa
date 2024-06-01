@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   DatabaseData,
   DatabaseRow,
@@ -20,7 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { createColumnsWithActions } from "./columns";
+import { columnsDef } from "./columns";
 import { RecordID } from "../../../api/types";
 import { emptySingleRecord } from "../../../utils/mock.fetch";
 import { nanoid } from "nanoid";
@@ -51,78 +51,96 @@ export const useDataGrid = (data: DatabaseData) => {
     });
   }, [data]);
 
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
-    params,
-    event
-  ) => {
-    event.defaultMuiPrevented = true;
-    switch (params.reason) {
-      case GridRowEditStopReasons.escapeKeyDown:
-        handleCancelClick(params.id)();
-        break;
-      case GridRowEditStopReasons.enterKeyDown:
-        handleSaveClick(params.id)();
-    }
-  };
+  const handleEditClick = useCallback(
+    (id: GridRowId) => () => {
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    },
+    [rowModesModel]
+  );
 
-  const handleEditClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
+  const handleSaveClick = useCallback(
+    (id: GridRowId) => () => {
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    },
+    [rowModesModel]
+  );
 
-  const handleSaveClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id: GridRowId) => () => {
-    dispatch(setIsOverlayShow(true));
-    dispatch(deleteRow({ id: id as RecordID, token: token as string })).catch(
-      () => dispatch(setIsOverlayShow(false))
-    );
-  };
-
-  const handleCancelClick = (id: GridRowId) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = newRows.find((row) => row.id === id);
-    if (editedRow) {
-      removeRow(id as RecordID);
-    }
-  };
-
-  const processRowUpdate = (newRow: GridRowModel<DatabaseRow>) => {
-    const id = newRow.id;
-    let error = "";
-    if (!newRow.employeeNumber) {
-      return Promise.reject('Поле "employeeNumber" не может быть пустым');
-    }
-    const creatingRow = newRows.find((row) => row.id === id);
-    if (creatingRow) {
-      dispatch(sendRow({ row: newRow, token: token as string }))
-        .then(() => {
-          removeRow(id);
-        })
-        .catch((err) => (error = err));
-    } else {
-      dispatch(sendRow({ row: newRow, token: token as string, id })).catch(
-        (err) => (error = err)
+  const handleDeleteClick = useCallback(
+    (id: GridRowId) => () => {
+      dispatch(setIsOverlayShow(true));
+      dispatch(deleteRow({ id: id as RecordID, token: token as string })).catch(
+        () => dispatch(setIsOverlayShow(false))
       );
-    }
-    if (error) return Promise.reject();
-    return newRow;
-  };
+    },
+    [dispatch]
+  );
 
-  const onProcessRowUpdateError = (error: string) => {
+  const handleCancelClick = useCallback(
+    (id: GridRowId) => () => {
+      setRowModesModel({
+        ...rowModesModel,
+        [id]: { mode: GridRowModes.View, ignoreModifications: true },
+      });
+
+      const editedRow = newRows.find((row) => row.id === id);
+      if (editedRow) {
+        removeRow(id as RecordID);
+      }
+    },
+    [newRows, rowModesModel]
+  );
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = useCallback(
+    (params, event) => {
+      event.defaultMuiPrevented = true;
+      switch (params.reason) {
+        case GridRowEditStopReasons.escapeKeyDown:
+          handleCancelClick(params.id)();
+          break;
+        case GridRowEditStopReasons.enterKeyDown:
+          handleSaveClick(params.id)();
+      }
+    },
+    [handleCancelClick, handleSaveClick]
+  );
+
+  const processRowUpdate = useCallback(
+    (newRow: GridRowModel<DatabaseRow>) => {
+      const id = newRow.id;
+      let error = "";
+      if (!newRow.employeeNumber) {
+        return Promise.reject('Поле "employeeNumber" не может быть пустым');
+      }
+      const creatingRow = newRows.find((row) => row.id === id);
+      if (creatingRow) {
+        dispatch(sendRow({ row: newRow, token: token as string }))
+          .then(() => {
+            removeRow(id);
+          })
+          .catch((err) => (error = err));
+      } else {
+        dispatch(sendRow({ row: newRow, token: token as string, id })).catch(
+          (err) => (error = err)
+        );
+      }
+      if (error) return Promise.reject();
+      return newRow;
+    },
+    [token, newRows, dispatch]
+  );
+
+  const onProcessRowUpdateError = useCallback((error: string) => {
     showSnackbar(error);
-  };
+  }, []);
 
-  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
+  const handleRowModesModelChange = useCallback(
+    (newRowModesModel: GridRowModesModel) => {
+      setRowModesModel(newRowModesModel);
+    },
+    []
+  );
 
-  const handleAddNewRow = () => {
+  const handleAddNewRow = useCallback(() => {
     const newRow = {
       id: nanoid(),
       ...emptySingleRecord,
@@ -139,64 +157,67 @@ export const useDataGrid = (data: DatabaseData) => {
     }));
     apiRef.current.setPage(0);
     apiRef.current.sortColumn("companySigDate", "desc");
-  };
+  }, [apiRef.current]);
 
-  const addNewRow = (newRow: DatabaseRow) => {
+  const addNewRow = useCallback((newRow: DatabaseRow) => {
     setNewRows((prev) => [...prev, newRow]);
     setRows((prev) => [...prev, newRow]);
-  };
+  }, []);
 
-  const removeRow = (id: RecordID) => {
+  const removeRow = useCallback((id: RecordID) => {
     setNewRows((prev) => prev.filter((row) => row.id !== id));
     setRows((prev) => prev.filter((row) => row.id !== id));
-  };
+  }, []);
 
-  const columns: GridColDef[] = createColumnsWithActions({
-    field: "actions",
-    type: "actions",
-    headerName: "Actions",
-    width: 100,
-    cellClassName: "actions",
-    getActions: ({ id }) => {
-      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+  const columns: GridColDef[] = [
+    ...columnsDef,
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 100,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
-      if (isInEditMode) {
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+
         return [
           <GridActionsCellItem
-            icon={<SaveIcon />}
-            label="Save"
-            sx={{
-              color: "primary.main",
-            }}
-            onClick={handleSaveClick(id)}
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
           />,
           <GridActionsCellItem
-            icon={<CancelIcon />}
-            label="Cancel"
-            className="textPrimary"
-            onClick={handleCancelClick(id)}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id)}
             color="inherit"
           />,
         ];
-      }
-
-      return [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Edit"
-          className="textPrimary"
-          onClick={handleEditClick(id)}
-          color="inherit"
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={handleDeleteClick(id)}
-          color="inherit"
-        />,
-      ];
+      },
     },
-  });
+  ];
 
   const handlers = {
     handleRowEditStop,
