@@ -107,7 +107,7 @@ export const useDataGrid = (data: DatabaseData) => {
   );
 
   const processRowUpdate = useCallback(
-    (newRow: GridRowModel<DatabaseRow>) => {
+    async (newRow: GridRowModel<DatabaseRow>) => {
       let returnedRow = newRow;
       const id = newRow.id;
       let error = "";
@@ -116,7 +116,7 @@ export const useDataGrid = (data: DatabaseData) => {
       }
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {
-        dispatch(sendRow({ row: newRow, token: token as string }))
+        await dispatch(sendRow({ row: newRow, token: token as string }))
           .unwrap()
           .then((row) => {
             returnedRow = row;
@@ -124,7 +124,7 @@ export const useDataGrid = (data: DatabaseData) => {
           })
           .catch((err) => (error = err));
       } else {
-        dispatch(sendRow({ row: newRow, token: token as string, id }))
+        await dispatch(sendRow({ row: newRow, token: token as string, id }))
           .unwrap()
           .then((row) => {
             returnedRow = row;
