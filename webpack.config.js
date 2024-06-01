@@ -43,4 +43,9 @@ module.exports = {
   devServer: {
     port: 5500,
   },
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+    },
+  },
 };
