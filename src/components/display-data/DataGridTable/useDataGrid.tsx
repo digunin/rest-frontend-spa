@@ -28,9 +28,12 @@ import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
 import { setIsOverlayShow } from "../../../store/overlaySlice";
 
+type AppCallback = () => void;
+
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+  const [abortFetch, setAbortFetch] = useState<AppCallback | null>(null);
   const { showSnackbar } = useAppSnackbar();
   const dispatch = useAppDispatch();
 
@@ -64,13 +67,14 @@ export const useDataGrid = (data: DatabaseData) => {
   );
 
   const handleDeleteClick = useCallback(
-    (id: GridRowId) => () => {
+    (id: GridRowId) => async () => {
       dispatch(setIsOverlayShow(true));
-      dispatch(deleteRow(id as RecordID))
-        .unwrap()
-        .catch(() => {
-          dispatch(setIsOverlayShow(false));
-        });
+      const response = dispatch(deleteRow(id as RecordID));
+      setAbortFetch(() => response.abort);
+      await response.unwrap().catch(() => {
+        dispatch(setIsOverlayShow(false));
+      });
+      setAbortFetch(null);
     },
     [dispatch]
   );
@@ -114,20 +118,26 @@ export const useDataGrid = (data: DatabaseData) => {
       }
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {
-        await dispatch(sendRow({ row: newRow }))
+        let response = dispatch(sendRow({ row: newRow }));
+        setAbortFetch(() => response.abort);
+        await response
           .unwrap()
           .then((row) => {
             returnedRow = row;
             removeRow(id);
           })
           .catch((err) => (error = err));
+        setAbortFetch(null);
       } else {
-        await dispatch(sendRow({ row: newRow, id }))
+        let response = dispatch(sendRow({ row: newRow, id }));
+        setAbortFetch(() => response.abort);
+        await response
           .unwrap()
           .then((row) => {
             returnedRow = row;
           })
           .catch((err) => (error = err));
+        setAbortFetch(null);
       }
       if (error) return Promise.reject();
       return returnedRow;
@@ -231,6 +241,7 @@ export const useDataGrid = (data: DatabaseData) => {
     handleRowModesModelChange,
     handleAddNewRow,
     onProcessRowUpdateError,
+    abortFetch,
   };
 
   return {

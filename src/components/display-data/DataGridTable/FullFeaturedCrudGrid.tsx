@@ -32,6 +32,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
     handleRowModesModelChange,
     processRowUpdate,
     onProcessRowUpdateError,
+    abortFetch,
   } = handlers;
 
   return React.useMemo(
@@ -59,7 +60,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
             toolbar: DataGridToolbar as GridSlots["toolbar"],
           }}
           slotProps={{
-            toolbar: { handleAddNewRow },
+            toolbar: { handleAddNewRow, abortFetch, loading },
           }}
           initialState={{
             pagination: testMode
@@ -89,6 +90,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
       handleRowModesModelChange,
       processRowUpdate,
       onProcessRowUpdateError,
+      abortFetch,
     ]
   );
 };

@@ -16,6 +16,7 @@ export const label_text = {
   password: "Пароль",
   app_bar_title: "База данных",
   addNewRecord: "Добавить запись",
+  abortFetch: "Отменить отправку",
 };
 
 export const databaseColumnNames = {
