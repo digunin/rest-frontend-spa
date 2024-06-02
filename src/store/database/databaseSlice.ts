@@ -44,15 +44,21 @@ export const sendRow = createAsyncThunk<
   const token = thunkAPI.getState().userState.token;
   row = fixBeforeSending(row);
   return id
-    ? api.update(row, id, token || "").catch((err) => Promise.reject(err))
-    : api.create(row, token || "").catch((err) => Promise.reject(err));
+    ? api
+        .update(row, id, token || "", thunkAPI.signal)
+        .catch((err) => Promise.reject(err))
+    : api
+        .create(row, token || "", thunkAPI.signal)
+        .catch((err) => Promise.reject(err));
 });
 
 export const deleteRow = createAsyncThunk<void, RecordID, { state: RootState }>(
   "data/delete",
   async (id, thunkAPI) => {
     const token = thunkAPI.getState().userState.token;
-    return api.delete(id, token || "").catch((err) => Promise.reject(err));
+    return api
+      .delete(id, token || "", thunkAPI.signal)
+      .catch((err) => Promise.reject(err));
   }
 );
 

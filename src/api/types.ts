@@ -31,12 +31,14 @@ export type CRUD_API = {
   read: (token: string) => Promise<ResponsedSingleRecord[]>;
   create: (
     record: SingleRecord,
-    token: string
+    token: string,
+    signal?: AbortSignal
   ) => Promise<ResponsedSingleRecord>;
   update: (
     record: SingleRecord,
     id: RecordID,
-    token: string
+    token: string,
+    signal?: AbortSignal
   ) => Promise<ResponsedSingleRecord>;
-  delete: (id: RecordID, token: string) => Promise<void>;
+  delete: (id: RecordID, token: string, signal?: AbortSignal) => Promise<void>;
 };

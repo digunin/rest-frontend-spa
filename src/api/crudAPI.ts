@@ -24,7 +24,8 @@ const getAuthHeaderInit = (token: string) => {
 export const createFetchOptions = (
   method: HTTPMethods,
   headersInit: HeadersInit,
-  body?: SingleRecord | Credentials
+  body?: SingleRecord | Credentials,
+  signal?: AbortSignal
 ) => {
   const headers = new Headers(headersInit);
   if (body) headers.append("Content-Type", "application/json");
@@ -32,11 +33,12 @@ export const createFetchOptions = (
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
+    signal,
   };
 };
 
 export const crudAPI: CRUD_API = {
-  login: async (credentials: Credentials): Promise<Token> => {
+  login: async (credentials): Promise<Token> => {
     const options = createFetchOptions("POST", {}, credentials);
     return genericFetch<Token>(new URL(LOGIN_URL, HOST_URL), options).then(
       (resp) => {
@@ -45,7 +47,7 @@ export const crudAPI: CRUD_API = {
       }
     );
   },
-  read: async (token: string): Promise<ResponsedSingleRecord[]> => {
+  read: async (token): Promise<ResponsedSingleRecord[]> => {
     const options = createFetchOptions("GET", getAuthHeaderInit(token));
     return genericFetch<ResponsedSingleRecord[]>(
       new URL(READ_URL, HOST_URL),
@@ -55,14 +57,12 @@ export const crudAPI: CRUD_API = {
       return Promise.reject(resp.error_text || "Не уддалось загрузить данные");
     });
   },
-  create: async (
-    record: SingleRecord,
-    token: string
-  ): Promise<ResponsedSingleRecord> => {
+  create: async (record, token, signal): Promise<ResponsedSingleRecord> => {
     const options = createFetchOptions(
       "POST",
       getAuthHeaderInit(token),
-      record
+      record,
+      signal
     );
     return genericFetch<ResponsedSingleRecord>(
       new URL(CREATE_URL, HOST_URL),
@@ -72,15 +72,12 @@ export const crudAPI: CRUD_API = {
       return Promise.reject(resp.error_text || "Не удалось добавить запись");
     });
   },
-  update: async (
-    record: SingleRecord,
-    id: RecordID,
-    token: string
-  ): Promise<ResponsedSingleRecord> => {
+  update: async (record, id, token, signal): Promise<ResponsedSingleRecord> => {
     const options = createFetchOptions(
       "POST",
       getAuthHeaderInit(token),
-      record
+      record,
+      signal
     );
     return genericFetch<ResponsedSingleRecord>(
       new URL(`${UPDATE_URL}/${id}`, HOST_URL),
@@ -90,8 +87,13 @@ export const crudAPI: CRUD_API = {
       return Promise.reject(resp.error_text || "Не удалось изменить запись");
     });
   },
-  delete: async (id: RecordID, token: string): Promise<void> => {
-    const options = createFetchOptions("POST", getAuthHeaderInit(token));
+  delete: async (id, token, signal): Promise<void> => {
+    const options = createFetchOptions(
+      "POST",
+      getAuthHeaderInit(token),
+      undefined,
+      signal
+    );
     return genericFetch<undefined>(
       new URL(`${DEETE_URL}/${id}`, HOST_URL),
       options
