@@ -5,7 +5,6 @@ import Database from "./components/AppDatabase";
 import { useErrorsDisplay } from "./hooks/useErrorsDisplay";
 import AppHeader from "./components/AppHeader";
 import { APP_BAR_HEIGHT } from "./utils/css-var";
-import AppOverlay from "./components/AppOverlay";
 
 const Login = lazy(() => import("./components/form/Login"));
 
@@ -15,7 +14,6 @@ function App() {
 
   return (
     <>
-      <AppOverlay />
       <AppHeader />
       <Container id="app" maxWidth="lg" sx={{ mt: `${APP_BAR_HEIGHT}px` }}>
         {!isAuth && (
