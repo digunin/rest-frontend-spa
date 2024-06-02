@@ -1,14 +1,14 @@
-export const labels = {
-  login_field_label: "Логин",
-  password_field_label: "Пароль",
-};
-
 export const error_messages = {
   notEmpty: "Поле не должно быть пустым",
   accessDeny: "Access deny",
   signIn: "Неверный логин или пароль",
-  authFailed: "Требуется авторизация",
   documentNotFound: "Document not found",
+};
+
+export const server_messages_RU: { [key: string]: string } = {
+  ["Access deny"]: "Требуется авторизация",
+  ["Document not found"]: "Документ не найден",
+  ["Bad request"]: "Некорректный запрос",
 };
 
 export const label_text = {

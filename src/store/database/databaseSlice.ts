@@ -6,7 +6,7 @@ import {
   SingleRecord,
 } from "../../api/types";
 import api from "../../api";
-import { error_messages } from "../../utils/text";
+import { error_messages, server_messages_RU } from "../../utils/text";
 import { RootState } from "..";
 
 export type DatabaseRow = ResponsedSingleRecord;
@@ -63,9 +63,7 @@ export const deleteRow = createAsyncThunk<void, RecordID, { state: RootState }>(
 );
 
 const getErrorMessage = (error: string) => {
-  return error === error_messages.accessDeny
-    ? error_messages.authFailed
-    : error;
+  return server_messages_RU[error] || error;
 };
 
 const fixBeforeSending = (row: SingleRecord): SingleRecord => {
