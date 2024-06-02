@@ -10,6 +10,7 @@ export const genericFetch = <TResp>(
         if (resp.ok) {
           return resp.json();
         }
+        if (resp.status === 400) return Promise.reject("Bad request");
         return Promise.reject(`${resp.status}, ${resp.statusText}`);
       })
       .then((resp: JSONResponse<TResp>) => {
