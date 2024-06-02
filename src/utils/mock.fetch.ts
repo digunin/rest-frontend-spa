@@ -73,6 +73,14 @@ export const emptySingleRecord = {
   employeeSignatureName: "",
 };
 
+export const hasEmptyFields = (record: SingleRecord): boolean => {
+  const keys = Object.keys(record).filter((key) => key !== "id");
+  for (const key of keys) {
+    if (!record[key as keyof SingleRecord]) return true;
+  }
+  return false;
+};
+
 export const mocked_read_response_data: ResponsedSingleRecord[] = [
   {
     companySigDate: "2022-12-23T11:19:27.017Z",

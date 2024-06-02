@@ -22,7 +22,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { columnsDef } from "./columns";
 import { RecordID } from "../../../api/types";
-import { emptySingleRecord } from "../../../utils/mock.fetch";
+import { emptySingleRecord, hasEmptyFields } from "../../../utils/mock.fetch";
 import { nanoid } from "nanoid";
 import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
@@ -118,8 +118,8 @@ export const useDataGrid = (data: DatabaseData) => {
       let returnedRow = newRow;
       const id = newRow.id;
       let error = "";
-      if (!newRow.employeeNumber) {
-        return Promise.reject('Поле "employeeNumber" не может быть пустым');
+      if (hasEmptyFields(newRow)) {
+        return Promise.reject("Заполните пустые поля");
       }
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {

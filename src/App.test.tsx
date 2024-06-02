@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  fireEvent,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import App from "./App";
 import { renderWithProvider } from "./utils/rtl-render-helper";
@@ -12,7 +7,7 @@ import * as Cookie from "./utils/cookies-api";
 import { label_text } from "./utils/text";
 import { fakeCredentials, fakeToken } from "./api/fake-crudAPI";
 
-const DELAY = 2000;
+const DELAY = 1500;
 
 describe("App testing", () => {
   const spyGetCookie = jest.spyOn(Cookie, "getCookies");
