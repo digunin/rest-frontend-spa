@@ -25,7 +25,8 @@ const testBoxStyles = {
 type CrudDataGrid = { data: DatabaseData; loading: boolean };
 
 const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
-  const { rows, rowModesModel, columns, handlers, apiRef } = useDataGrid(data);
+  const { rows, rowModesModel, columns, handlers, apiRef, activeRequests } =
+    useDataGrid(data);
   const {
     handleAddNewRow,
     handleRowEditStop,
@@ -60,7 +61,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
             toolbar: DataGridToolbar as GridSlots["toolbar"],
           }}
           slotProps={{
-            toolbar: { handleAddNewRow, abortFetch, loading },
+            toolbar: { handleAddNewRow },
           }}
           initialState={{
             pagination: testMode
@@ -72,7 +73,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
           }}
           sx={{ minHeight: testMode ? 450 : "auto", p: 1 }}
           apiRef={apiRef}
-          loading={loading}
+          loading={loading && !activeRequests}
           pageSizeOptions={[5, 10, 25, 50, 100]}
           autoPageSize={testMode ? false : true}
         />
@@ -91,6 +92,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
       processRowUpdate,
       onProcessRowUpdateError,
       abortFetch,
+      activeRequests,
     ]
   );
 };

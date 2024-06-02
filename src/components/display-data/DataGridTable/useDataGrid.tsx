@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DatabaseData,
   DatabaseRow,
@@ -34,7 +34,9 @@ type AppCallback = () => void;
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-  const [abortFetch, setAbortFetch] = useState<AppCallback | null>(null);
+  const [abortFetch, setAbortFetch] = useState<{
+    [key: RecordID]: AppCallback | undefined;
+  }>({});
   const { showSnackbar } = useAppSnackbar();
   const dispatch = useAppDispatch();
 
@@ -62,6 +64,7 @@ export const useDataGrid = (data: DatabaseData) => {
 
   const handleSaveClick = useCallback(
     (id: GridRowId) => () => {
+      if (abortFetch[id]) return;
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     },
     [rowModesModel]
@@ -71,17 +74,18 @@ export const useDataGrid = (data: DatabaseData) => {
     (id: GridRowId) => async () => {
       dispatch(setIsOverlayShow(true));
       const response = dispatch(deleteRow(id as RecordID));
-      setAbortFetch(() => response.abort);
+      addAbortCallback(id as RecordID, response.abort);
       await response.unwrap().catch(() => {
         dispatch(setIsOverlayShow(false));
       });
-      setAbortFetch(null);
+      removeAbortCallback(id as RecordID);
     },
     [dispatch]
   );
 
   const handleCancelClick = useCallback(
     (id: GridRowId) => () => {
+      if (abortFetch[id]) return;
       setRowModesModel({
         ...rowModesModel,
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -120,7 +124,7 @@ export const useDataGrid = (data: DatabaseData) => {
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {
         let response = dispatch(sendRow({ row: newRow }));
-        setAbortFetch(() => response.abort);
+        addAbortCallback(id as RecordID, response.abort);
         await response
           .unwrap()
           .then((row) => {
@@ -128,17 +132,17 @@ export const useDataGrid = (data: DatabaseData) => {
             removeRow(id);
           })
           .catch((err) => (error = err));
-        setAbortFetch(null);
+        removeAbortCallback(id as RecordID);
       } else {
         let response = dispatch(sendRow({ row: newRow, id }));
-        setAbortFetch(() => response.abort);
+        addAbortCallback(id as RecordID, response.abort);
         await response
           .unwrap()
           .then((row) => {
             returnedRow = row;
           })
           .catch((err) => (error = err));
-        setAbortFetch(null);
+        removeAbortCallback(id as RecordID);
       }
       if (error) return Promise.reject();
       return returnedRow;
@@ -186,88 +190,108 @@ export const useDataGrid = (data: DatabaseData) => {
     setRows((prev) => prev.filter((row) => row.id !== id));
   }, []);
 
-  const columns: GridColDef[] = [
-    ...columnsDef,
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+  const addAbortCallback = useCallback((id: RecordID, aborter: AppCallback) => {
+    setAbortFetch((prev) => {
+      return { ...prev, [id]: aborter };
+    });
+  }, []);
 
-        const showAbotrButton = false;
+  const removeAbortCallback = useCallback((id: RecordID) => {
+    setAbortFetch((prev) => {
+      return { ...prev, [id]: undefined };
+    });
+  }, []);
 
-        const abortButton: React.JSX.Element[] = showAbotrButton
-          ? [
-              // <CircularProgress />,
-              <GridActionsCellItem
-                icon={<Loop />}
-                label="Abort"
-                sx={{
-                  color: "primary.main",
-                  animation: "spin 2s linear infinite",
-                  "@keyframes spin": {
-                    "0%": {
-                      transform: "rotate(360deg)",
+  const columns: GridColDef[] = useMemo(() => {
+    return [
+      ...columnsDef,
+      {
+        field: "actions",
+        type: "actions",
+        headerName: "Actions",
+        minWidth: 126,
+        cellClassName: "actions",
+        getActions: ({ id }) => {
+          const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+          const showAbotrButton = !!abortFetch[id];
+
+          const abortButton: React.JSX.Element[] = showAbotrButton
+            ? [
+                <GridActionsCellItem
+                  icon={<Loop color="warning" />}
+                  label="Abort"
+                  title="Отменить запрос"
+                  sx={{
+                    animation: "spin 2s linear infinite",
+                    "@keyframes spin": {
+                      "0%": {
+                        transform: "rotate(360deg)",
+                      },
+                      "100%": {
+                        transform: "rotate(0deg)",
+                      },
                     },
-                    "100%": {
-                      transform: "rotate(0deg)",
-                    },
-                  },
-                }}
-                onClick={() => console.log("cancel request")}
-              />,
-            ]
-          : [];
+                  }}
+                  onClick={abortFetch[id]}
+                />,
+              ]
+            : [];
 
-        const editModeActions = [
-          <GridActionsCellItem
-            icon={<SaveIcon />}
-            label="Save"
-            sx={{
-              color: "primary.main",
-            }}
-            onClick={handleSaveClick(id)}
-            disabled={showAbotrButton}
-          />,
-          <GridActionsCellItem
-            icon={<CancelIcon />}
-            label="Cancel"
-            className="textPrimary"
-            onClick={handleCancelClick(id)}
-            color="inherit"
-            disabled={showAbotrButton}
-          />,
-        ];
+          const editModeActions = [
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={handleSaveClick(id)}
+              disabled={showAbotrButton}
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+              disabled={showAbotrButton}
+            />,
+          ];
 
-        const viewModeActions = [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-            disabled={showAbotrButton}
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-            disabled={showAbotrButton}
-          />,
-        ];
+          const viewModeActions = [
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="Edit"
+              className="textPrimary"
+              onClick={handleEditClick(id)}
+              color="inherit"
+              disabled={showAbotrButton}
+            />,
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handleDeleteClick(id)}
+              color="inherit"
+              disabled={showAbotrButton}
+            />,
+          ];
 
-        if (isInEditMode) {
-          return [...editModeActions, ...abortButton];
-        }
+          if (isInEditMode) {
+            return [...editModeActions, ...abortButton];
+          }
 
-        return [...viewModeActions, ...abortButton];
+          return [...viewModeActions, ...abortButton];
+        },
       },
-    },
-  ];
+    ];
+  }, [
+    rowModesModel,
+    abortFetch,
+    handleSaveClick,
+    handleCancelClick,
+    handleEditClick,
+    handleDeleteClick,
+  ]);
 
   const handlers = {
     handleRowEditStop,
@@ -284,5 +308,6 @@ export const useDataGrid = (data: DatabaseData) => {
     columns,
     handlers,
     apiRef,
+    activeRequests: Object.keys(abortFetch).length > 0,
   };
 };
