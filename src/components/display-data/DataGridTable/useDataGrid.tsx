@@ -27,6 +27,7 @@ import { nanoid } from "nanoid";
 import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
 import { setIsOverlayShow } from "../../../store/overlaySlice";
+import { Loop } from "@mui/icons-material";
 
 type AppCallback = () => void;
 
@@ -196,41 +197,74 @@ export const useDataGrid = (data: DatabaseData) => {
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
+        const showAbotrButton = false;
 
-        return [
+        const abortButton: React.JSX.Element[] = showAbotrButton
+          ? [
+              // <CircularProgress />,
+              <GridActionsCellItem
+                icon={<Loop />}
+                label="Abort"
+                sx={{
+                  color: "primary.main",
+                  animation: "spin 2s linear infinite",
+                  "@keyframes spin": {
+                    "0%": {
+                      transform: "rotate(360deg)",
+                    },
+                    "100%": {
+                      transform: "rotate(0deg)",
+                    },
+                  },
+                }}
+                onClick={() => console.log("cancel request")}
+              />,
+            ]
+          : [];
+
+        const editModeActions = [
+          <GridActionsCellItem
+            icon={<SaveIcon />}
+            label="Save"
+            sx={{
+              color: "primary.main",
+            }}
+            onClick={handleSaveClick(id)}
+            disabled={showAbotrButton}
+          />,
+          <GridActionsCellItem
+            icon={<CancelIcon />}
+            label="Cancel"
+            className="textPrimary"
+            onClick={handleCancelClick(id)}
+            color="inherit"
+            disabled={showAbotrButton}
+          />,
+        ];
+
+        const viewModeActions = [
           <GridActionsCellItem
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
             onClick={handleEditClick(id)}
             color="inherit"
+            disabled={showAbotrButton}
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
+            disabled={showAbotrButton}
           />,
         ];
+
+        if (isInEditMode) {
+          return [...editModeActions, ...abortButton];
+        }
+
+        return [...viewModeActions, ...abortButton];
       },
     },
   ];
