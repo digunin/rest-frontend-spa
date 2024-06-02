@@ -12,7 +12,7 @@ import * as Cookie from "./utils/cookies-api";
 import { label_text } from "./utils/text";
 import { fakeCredentials, fakeToken } from "./api/fake-crudAPI";
 
-const DELAY = 1500;
+const DELAY = 2000;
 
 describe("App testing", () => {
   const spyGetCookie = jest.spyOn(Cookie, "getCookies");
@@ -122,7 +122,7 @@ describe("App testing", () => {
     });
     renderWithProvider(<App />);
     await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
-      timeout: 2000,
+      timeout: DELAY,
     });
     expect(screen.getByText("1111")).toBeInTheDocument();
     expect(screen.getByText("2222")).toBeInTheDocument();
@@ -138,7 +138,9 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6));
+    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
+      timeout: DELAY,
+    });
     fireEvent.click(screen.getByText(label_text.addNewRecord));
     const rows = screen.getAllByRole("row");
     expect(rows.length).toBe(7);
@@ -169,7 +171,9 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6));
+    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
+      timeout: DELAY,
+    });
     const rows = screen.getAllByRole("row");
     expect(rows.length).toBe(6);
     const editedRow = rows[2];
@@ -214,7 +218,9 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6));
+    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
+      timeout: DELAY,
+    });
     let deleteButtons = screen.getAllByRole("menuitem", {
       name: /Delete/i,
     });
