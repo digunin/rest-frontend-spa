@@ -7,6 +7,7 @@ import {
 } from "../../api/types";
 import api from "../../api";
 import { error_messages } from "../../utils/text";
+import { RootState } from "..";
 
 export type DatabaseRow = ResponsedSingleRecord;
 export type DatabaseData = Array<DatabaseRow>;
@@ -21,30 +22,37 @@ const initialState: DatabaseState = {
   error: "",
 };
 
-export const loadData = createAsyncThunk("data/load", async (token: string) => {
-  return api.read(token).catch((err) => Promise.reject(err));
+export const loadData = createAsyncThunk<
+  DatabaseData,
+  any,
+  { state: RootState }
+>("data/load", async (_, thunkAPI) => {
+  const token = thunkAPI.getState().userState.token;
+  return api.read(token || "").catch((err) => Promise.reject(err));
 });
 
 type SendRowProps = {
-  token: string;
   row: SingleRecord;
   id?: RecordID;
 };
 
-export const sendRow = createAsyncThunk(
-  "data/send",
-  async ({ token, row, id }: SendRowProps) => {
-    row = fixBeforeSending(row);
-    return id
-      ? api.update(row, id, token).catch((err) => Promise.reject(err))
-      : api.create(row, token).catch((err) => Promise.reject(err));
-  }
-);
+export const sendRow = createAsyncThunk<
+  DatabaseRow,
+  SendRowProps,
+  { state: RootState }
+>("data/send", async ({ row, id }: SendRowProps, thunkAPI) => {
+  const token = thunkAPI.getState().userState.token;
+  row = fixBeforeSending(row);
+  return id
+    ? api.update(row, id, token || "").catch((err) => Promise.reject(err))
+    : api.create(row, token || "").catch((err) => Promise.reject(err));
+});
 
-export const deleteRow = createAsyncThunk(
+export const deleteRow = createAsyncThunk<void, RecordID, { state: RootState }>(
   "data/delete",
-  async ({ token, id }: Required<Omit<SendRowProps, "row">>) => {
-    return api.delete(id, token).catch((err) => Promise.reject(err));
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().userState.token;
+    return api.delete(id, token || "").catch((err) => Promise.reject(err));
   }
 );
 
@@ -110,14 +118,14 @@ const databaseSlice = createSlice({
     builder.addCase(deleteRow.rejected, (state, action) => {
       state.status = "failed";
       if (action.error.message === error_messages.documentNotFound) {
-        state.data = state.data.filter((row) => row.id !== action.meta.arg.id);
+        state.data = state.data.filter((row) => row.id !== action.meta.arg);
       }
       state.error = getErrorMessage(action.error.message || "");
     });
     builder.addCase(deleteRow.fulfilled, (state, action) => {
       state.status = "idle";
       state.error = "";
-      const { id } = action.meta.arg;
+      const id = action.meta.arg;
       state.data = state.data.filter((row) => row.id !== id);
     });
   },

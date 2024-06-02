@@ -26,7 +26,6 @@ import { emptySingleRecord } from "../../../utils/mock.fetch";
 import { nanoid } from "nanoid";
 import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
-import { useAuth } from "../../../hooks/useAuth";
 import { setIsOverlayShow } from "../../../store/overlaySlice";
 
 export const useDataGrid = (data: DatabaseData) => {
@@ -34,7 +33,6 @@ export const useDataGrid = (data: DatabaseData) => {
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const { showSnackbar } = useAppSnackbar();
   const dispatch = useAppDispatch();
-  const { token } = useAuth();
 
   // newRows - массив копий свежесозданных строк,
   // которые еще не сохранены в redux-store.
@@ -68,7 +66,7 @@ export const useDataGrid = (data: DatabaseData) => {
   const handleDeleteClick = useCallback(
     (id: GridRowId) => () => {
       dispatch(setIsOverlayShow(true));
-      dispatch(deleteRow({ id: id as RecordID, token: token as string }))
+      dispatch(deleteRow(id as RecordID))
         .unwrap()
         .catch(() => {
           dispatch(setIsOverlayShow(false));
@@ -116,7 +114,7 @@ export const useDataGrid = (data: DatabaseData) => {
       }
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {
-        await dispatch(sendRow({ row: newRow, token: token as string }))
+        await dispatch(sendRow({ row: newRow }))
           .unwrap()
           .then((row) => {
             returnedRow = row;
@@ -124,7 +122,7 @@ export const useDataGrid = (data: DatabaseData) => {
           })
           .catch((err) => (error = err));
       } else {
-        await dispatch(sendRow({ row: newRow, token: token as string, id }))
+        await dispatch(sendRow({ row: newRow, id }))
           .unwrap()
           .then((row) => {
             returnedRow = row;
@@ -134,7 +132,7 @@ export const useDataGrid = (data: DatabaseData) => {
       if (error) return Promise.reject();
       return returnedRow;
     },
-    [token, newRows, dispatch]
+    [newRows, dispatch]
   );
 
   const onProcessRowUpdateError = useCallback((error: string) => {
