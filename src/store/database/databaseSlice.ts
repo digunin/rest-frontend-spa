@@ -104,6 +104,9 @@ const databaseSlice = createSlice({
     });
     builder.addCase(sendRow.rejected, (state, action) => {
       state.status = "failed";
+      if (action.error.message === error_messages.accessDeny) {
+        state.data = [];
+      }
       state.error = getErrorMessage(action.error.message || "");
     });
     builder.addCase(sendRow.fulfilled, (state, action) => {
@@ -125,6 +128,9 @@ const databaseSlice = createSlice({
       state.status = "failed";
       if (action.error.message === error_messages.documentNotFound) {
         state.data = state.data.filter((row) => row.id !== action.meta.arg);
+      }
+      if (action.error.message === error_messages.accessDeny) {
+        state.data = [];
       }
       state.error = getErrorMessage(action.error.message || "");
     });
