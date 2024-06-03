@@ -7,11 +7,11 @@ import {
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
 import { databaseColumnNames } from "../../../utils/text";
-import { inherits } from "util";
 
 const commonColsDef: GridColDef = {
   field: "",
   editable: true,
+  minWidth: 100,
   renderEditCell: (params: GridRenderEditCellParams) => {
     return <GridEditInputCell {...params} title={params.error_message || ""} />;
   },
@@ -32,15 +32,15 @@ export const columnsDef: GridColDef[] = [
     type: "number",
     headerName: databaseColumnNames.employeeNumber,
     align: "left",
-    minWidth: 100,
+    minWidth: 60,
     flex: 1,
   },
   {
     editable: true,
     field: "employeeSigDate",
     type: "dateTime",
-    headerName: databaseColumnNames.employeeSigDate,
     minWidth: 100,
+    headerName: databaseColumnNames.employeeSigDate,
     flex: 1,
     renderCell: (params: GridRenderCellParams) => {
       return (
@@ -57,29 +57,26 @@ export const columnsDef: GridColDef[] = [
     ...commonColsDef,
     field: "documentType",
     headerName: databaseColumnNames.documentType,
-    minWidth: 150,
     flex: 1,
   },
   {
     ...commonColsDef,
     field: "documentName",
     headerName: databaseColumnNames.documentName,
-    minWidth: 150,
     flex: 1,
   },
   {
     ...commonColsDef,
     field: "documentStatus",
     headerName: databaseColumnNames.documentStatus,
-    minWidth: 100,
     flex: 1,
   },
   {
     editable: true,
     field: "companySigDate",
     type: "dateTime",
-    headerName: databaseColumnNames.companySigDate,
     minWidth: 100,
+    headerName: databaseColumnNames.companySigDate,
     flex: 1,
     renderCell: (params: GridRenderCellParams<any, Date>) => {
       return (
@@ -96,14 +93,12 @@ export const columnsDef: GridColDef[] = [
     ...commonColsDef,
     field: "employeeSignatureName",
     headerName: databaseColumnNames.employeeSignatureName,
-    minWidth: 100,
     flex: 1,
   },
   {
     ...commonColsDef,
     field: "companySignatureName",
     headerName: databaseColumnNames.companySignatureName,
-    minWidth: 100,
     flex: 1,
   },
 ];
