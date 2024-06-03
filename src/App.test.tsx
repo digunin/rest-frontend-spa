@@ -220,6 +220,10 @@ describe("App testing", () => {
       name: /Delete/i,
     });
     fireEvent.click(deleteButtons[4]);
+    await waitFor(() =>
+      expect(screen.getByText(/удалить/i)).toBeInTheDocument()
+    );
+    fireEvent.click(screen.getByText(/удалить/i));
     await waitFor(() => expect(screen.getAllByRole("row").length).toBe(5), {
       timeout: DELAY,
     });
@@ -233,6 +237,11 @@ describe("App testing", () => {
       name: /Delete/i,
     });
     fireEvent.click(deleteButtons[0]);
+    await waitFor(() =>
+      expect(screen.getByText(/удалить/i)).toBeInTheDocument()
+    );
+    fireEvent.click(screen.getByLabelText(label_text.askConfirm));
+    fireEvent.click(screen.getByText(/удалить/i));
     await waitFor(() => expect(screen.getAllByRole("row").length).toBe(4), {
       timeout: DELAY,
     });

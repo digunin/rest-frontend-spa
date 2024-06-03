@@ -17,6 +17,7 @@ export const label_text = {
   app_bar_title: "База данных",
   addNewRecord: "Добавить запись",
   abortFetch: "Отменить отправку",
+  askConfirm: "больше не спрашивать",
 };
 
 export const databaseColumnNames = {

@@ -28,8 +28,9 @@ import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
 import { setIsOverlayShow } from "../../../store/overlaySlice";
 import { Loop } from "@mui/icons-material";
+import { useConfirmDialog } from "./useConfirmDialog";
 
-type AppCallback = () => void;
+export type AppCallback = () => void;
 
 export const useDataGrid = (data: DatabaseData) => {
   const [rows, setRows] = useState<DatabaseData>(data);
@@ -39,6 +40,8 @@ export const useDataGrid = (data: DatabaseData) => {
   }>({});
   const { showSnackbar } = useAppSnackbar();
   const dispatch = useAppDispatch();
+  const { askConfirm, confirmOpen, onClose, onConfirm, setConfirmOpen } =
+    useConfirmDialog();
 
   // newRows - массив копий свежесозданных строк,
   // которые еще не сохранены в redux-store.
@@ -70,17 +73,29 @@ export const useDataGrid = (data: DatabaseData) => {
     [rowModesModel]
   );
 
-  const handleDeleteClick = useCallback(
-    (id: GridRowId) => async () => {
-      dispatch(setIsOverlayShow(true));
-      const response = dispatch(deleteRow(id as RecordID));
-      addAbortCallback(id as RecordID, response.abort);
-      await response.unwrap().catch(() => {
-        dispatch(setIsOverlayShow(false));
-      });
-      removeAbortCallback(id as RecordID);
+  const deleteAfterConfirm = useCallback(
+    (callback: AppCallback) => {
+      if (askConfirm) {
+        setConfirmOpen(() => callback);
+      } else callback();
     },
-    [dispatch]
+    [askConfirm]
+  );
+
+  const handleDeleteClick = useCallback(
+    (id: GridRowId) => () => {
+      const processDelete = async () => {
+        dispatch(setIsOverlayShow(true));
+        const response = dispatch(deleteRow(id as RecordID));
+        addAbortCallback(id as RecordID, response.abort);
+        await response.unwrap().catch(() => {
+          dispatch(setIsOverlayShow(false));
+        });
+        removeAbortCallback(id as RecordID);
+      };
+      deleteAfterConfirm(processDelete);
+    },
+    [dispatch, deleteAfterConfirm]
   );
 
   const handleCancelClick = useCallback(
@@ -300,6 +315,8 @@ export const useDataGrid = (data: DatabaseData) => {
     handleAddNewRow,
     onProcessRowUpdateError,
     abortFetch,
+    onClose,
+    onConfirm,
   };
 
   return {
@@ -309,5 +326,6 @@ export const useDataGrid = (data: DatabaseData) => {
     handlers,
     apiRef,
     activeRequests: Object.keys(abortFetch).length > 0,
+    confirmOpen: !!confirmOpen,
   };
 };

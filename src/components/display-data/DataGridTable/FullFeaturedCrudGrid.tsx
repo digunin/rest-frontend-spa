@@ -4,6 +4,7 @@ import { DataGrid, GridSlots } from "@mui/x-data-grid";
 import { DatabaseData } from "../../../store/database/databaseSlice";
 import DataGridToolbar from "./DataGridToolbar";
 import { useDataGrid } from "./useDataGrid";
+import AppConfirmDialog from "./AppConfirmDialog";
 
 const testMode = process.env.NODE_ENV === "test";
 
@@ -25,14 +26,23 @@ const testBoxStyles = {
 type CrudDataGrid = { data: DatabaseData; loading: boolean };
 
 const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
-  const { rows, rowModesModel, columns, handlers, apiRef, activeRequests } =
-    useDataGrid(data);
+  const {
+    rows,
+    rowModesModel,
+    columns,
+    handlers,
+    apiRef,
+    activeRequests,
+    confirmOpen,
+  } = useDataGrid(data);
   const {
     handleAddNewRow,
     handleRowEditStop,
     handleRowModesModelChange,
     processRowUpdate,
     onProcessRowUpdateError,
+    onClose,
+    onConfirm,
     abortFetch,
   } = handlers;
 
@@ -77,6 +87,13 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
           pageSizeOptions={[5, 10, 25, 50, 100]}
           autoPageSize={testMode ? false : true}
         />
+        <AppConfirmDialog
+          title="Подтвердите удаление"
+          body=""
+          open={confirmOpen}
+          onClose={onClose}
+          onConfirm={onConfirm()}
+        />
       </Box>
     ),
     [
@@ -93,6 +110,9 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
       onProcessRowUpdateError,
       abortFetch,
       activeRequests,
+      onClose,
+      onConfirm,
+      confirmOpen,
     ]
   );
 };
