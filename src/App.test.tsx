@@ -148,7 +148,7 @@ describe("App testing", () => {
     fireEvent.change(employee_number_input, { target: { value: 654 } });
     fireEvent.change(document_type_input, { target: { value: "new doc" } });
     const actionButtons = editedRow.getElementsByTagName("button");
-    expect(actionButtons.length).toBe(2);
+    expect(actionButtons.length).toBe(3);
     const saveButton = actionButtons[0];
     expect(saveButton).toHaveAttribute("aria-label", "Save");
     fireEvent.click(saveButton);
@@ -173,9 +173,10 @@ describe("App testing", () => {
     expect(rows.length).toBe(6);
     const editedRow = rows[2];
     const edit_delete_button = editedRow.getElementsByTagName("button");
-    expect(edit_delete_button.length).toBe(2);
+    expect(edit_delete_button.length).toBe(3);
     expect(edit_delete_button[0]).toHaveAttribute("aria-label", "Edit");
     expect(edit_delete_button[1]).toHaveAttribute("aria-label", "Delete");
+    expect(edit_delete_button[2]).toHaveAttribute("aria-label", "Abort");
     fireEvent.click(edit_delete_button[0]);
     await waitFor(() =>
       expect(
@@ -195,9 +196,10 @@ describe("App testing", () => {
     fireEvent.change(employee_number_input, { target: { value: 222 } });
     fireEvent.change(document_type_input, { target: { value: "Приказ" } });
     const save_cancel_button = editedRow.getElementsByTagName("button");
-    expect(save_cancel_button.length).toBe(2);
+    expect(save_cancel_button.length).toBe(3);
     expect(save_cancel_button[0]).toHaveAttribute("aria-label", "Save");
     expect(save_cancel_button[1]).toHaveAttribute("aria-label", "Cancel");
+    expect(save_cancel_button[2]).toHaveAttribute("aria-label", "Abort");
     fireEvent.click(save_cancel_button[0]);
     await waitFor(() =>
       expect(screen.queryByRole("menuitem", { name: /save/i })).toBeFalsy()

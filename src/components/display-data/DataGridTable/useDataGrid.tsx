@@ -229,9 +229,9 @@ export const useDataGrid = (data: DatabaseData) => {
         getActions: ({ id }) => {
           const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
-          const showAbotrButton = !!abortFetch[id];
+          const enableAbortButton = !!abortFetch[id];
 
-          const abortButton: React.JSX.Element[] = showAbotrButton
+          const abortButton: React.JSX.Element[] = enableAbortButton
             ? [
                 <GridActionsCellItem
                   icon={<Loop color="warning" />}
@@ -251,7 +251,13 @@ export const useDataGrid = (data: DatabaseData) => {
                   onClick={abortFetch[id]}
                 />,
               ]
-            : [];
+            : [
+                <GridActionsCellItem
+                  icon={<Loop color="inherit" />}
+                  label="Abort"
+                  title="Отменить запрос"
+                />,
+              ];
 
           const editModeActions = [
             <GridActionsCellItem
@@ -261,7 +267,7 @@ export const useDataGrid = (data: DatabaseData) => {
                 color: "primary.main",
               }}
               onClick={handleSaveClick(id)}
-              disabled={showAbotrButton}
+              disabled={enableAbortButton}
             />,
             <GridActionsCellItem
               icon={<CancelIcon />}
@@ -269,7 +275,7 @@ export const useDataGrid = (data: DatabaseData) => {
               className="textPrimary"
               onClick={handleCancelClick(id)}
               color="inherit"
-              disabled={showAbotrButton}
+              disabled={enableAbortButton}
             />,
           ];
 
@@ -280,14 +286,14 @@ export const useDataGrid = (data: DatabaseData) => {
               className="textPrimary"
               onClick={handleEditClick(id)}
               color="inherit"
-              disabled={showAbotrButton}
+              disabled={enableAbortButton}
             />,
             <GridActionsCellItem
               icon={<DeleteIcon />}
               label="Delete"
               onClick={handleDeleteClick(id)}
               color="inherit"
-              disabled={showAbotrButton}
+              disabled={enableAbortButton}
             />,
           ];
 
