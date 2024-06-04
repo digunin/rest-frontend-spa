@@ -3,6 +3,7 @@ import {
   DatabaseData,
   DatabaseRow,
   deleteRow,
+  loadData,
   sendRow,
 } from "../../../store/database/databaseSlice";
 import {
@@ -29,6 +30,7 @@ import { useAppDispatch } from "../../../store";
 import { setIsOverlayShow } from "../../../store/overlaySlice";
 import { Loop } from "@mui/icons-material";
 import { useConfirmDialog } from "./useConfirmDialog";
+import { error_messages } from "../../../utils/text";
 
 export type AppCallback = () => void;
 
@@ -85,13 +87,18 @@ export const useDataGrid = (data: DatabaseData) => {
   const handleDeleteClick = useCallback(
     (id: GridRowId) => () => {
       const processDelete = async () => {
+        let errorName = "";
         dispatch(setIsOverlayShow(true));
         const response = dispatch(deleteRow(id as RecordID));
         addAbortCallback(id as RecordID, response.abort);
-        await response.unwrap().catch(() => {
+        await response.unwrap().catch((err: Error) => {
+          errorName = err.name;
           dispatch(setIsOverlayShow(false));
         });
         removeAbortCallback(id as RecordID);
+        if (errorName === error_messages.abortedErrorName) {
+          dispatch(loadData());
+        }
       };
       deleteAfterConfirm(processDelete);
     },
@@ -132,7 +139,7 @@ export const useDataGrid = (data: DatabaseData) => {
     async (newRow: GridRowModel<DatabaseRow>) => {
       let returnedRow = newRow;
       const id = newRow.id;
-      let error = "";
+      let error: Error = { name: "", message: "" };
       if (hasEmptyFields(newRow)) {
         return Promise.reject("Заполните пустые поля");
       }
@@ -146,7 +153,7 @@ export const useDataGrid = (data: DatabaseData) => {
             returnedRow = row;
             removeRow(id);
           })
-          .catch((err) => (error = err));
+          .catch((err: Error) => (error = err));
         removeAbortCallback(id as RecordID);
       } else {
         let response = dispatch(sendRow({ row: newRow, id }));
@@ -156,10 +163,15 @@ export const useDataGrid = (data: DatabaseData) => {
           .then((row) => {
             returnedRow = row;
           })
-          .catch((err) => (error = err));
+          .catch((err: Error) => (error = err));
         removeAbortCallback(id as RecordID);
       }
-      if (error) return Promise.reject();
+      if (error.name || error.message) {
+        if (error.name === error_messages.abortedErrorName) {
+          dispatch(loadData());
+        }
+        return Promise.reject();
+      }
       return returnedRow;
     },
     [newRows, dispatch]
@@ -213,7 +225,8 @@ export const useDataGrid = (data: DatabaseData) => {
 
   const removeAbortCallback = useCallback((id: RecordID) => {
     setAbortFetch((prev) => {
-      return { ...prev, [id]: undefined };
+      const { [id]: _, ...rest } = prev;
+      return rest;
     });
   }, []);
 

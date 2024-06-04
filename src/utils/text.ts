@@ -3,12 +3,15 @@ export const error_messages = {
   accessDeny: "Access deny",
   signIn: "Неверный логин или пароль",
   documentNotFound: "Document not found",
+  aborted: "Aborted",
+  abortedErrorName: "AbortError",
 };
 
 export const server_messages_RU: { [key: string]: string } = {
   ["Access deny"]: "Требуется авторизация",
   ["Document not found"]: "Документ не найден",
   ["Bad request"]: "Некорректный запрос",
+  ["Aborted"]: "Отмена",
 };
 
 export const label_text = {

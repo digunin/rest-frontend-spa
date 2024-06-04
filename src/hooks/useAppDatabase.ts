@@ -11,7 +11,7 @@ export const useAppDatabase = () => {
 
   useEffect(() => {
     if (!isAuth) return;
-    dispatch(loadData(token as string));
+    dispatch(loadData());
   }, []);
 
   return { data, error, loading: status === "loading" };

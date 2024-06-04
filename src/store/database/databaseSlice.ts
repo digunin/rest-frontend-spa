@@ -24,7 +24,7 @@ const initialState: DatabaseState = {
 
 export const loadData = createAsyncThunk<
   DatabaseData,
-  any,
+  void,
   { state: RootState }
 >("data/load", async (_, thunkAPI) => {
   const token = thunkAPI.getState().userState.token;
