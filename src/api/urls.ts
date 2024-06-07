@@ -1,4 +1,5 @@
 import { HTTPMethods } from "./types";
+import prod_mode from "../utils/isProdMode";
 
 const url_prod_mode = {
   HOST_URL: process.env.HOST_URL as string,
@@ -31,8 +32,6 @@ const dev_http_methods: { [key in HTTPMethods]: HTTPMethods } = {
   PUT: "PUT",
   DELETE: "DELETE",
 };
-
-const prod_mode = process.env.NODE_ENV === "production";
 
 export const urls = prod_mode ? url_prod_mode : url_dev_mode;
 export const http_methods = prod_mode ? prod_http_methods : dev_http_methods;

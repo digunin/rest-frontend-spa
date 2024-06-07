@@ -1,19 +1,17 @@
 import React, { lazy, Suspense } from "react";
-// import Database from "./display-data/DataGridTable/FullFeaturedCrudGrid";
-import { useAppDatabase } from "../hooks/useAppDatabase";
 import { Paper } from "@mui/material";
+import { useLoadDataQuery } from "../api/databaseAPI";
 
 const Database = lazy(
   () => import("./display-data/DataGridTable/FullFeaturedCrudGrid")
 );
 
 const AppDatabase = () => {
-  const { data, loading } = useAppDatabase();
-
+  const { data, isLoading: loading } = useLoadDataQuery();
   return (
     <Suspense>
       <Paper>
-        <Database data={data} loading={loading} />
+        <Database data={data || []} loading={loading} />
       </Paper>
     </Suspense>
   );

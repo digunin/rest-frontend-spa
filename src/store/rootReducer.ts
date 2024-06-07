@@ -3,6 +3,7 @@ import loginFormReducer from "./form/loginFormSlice";
 import databaseReducer from "./database/databaseSlice";
 import overlayReducer from "./overlaySlice";
 import { signInAPI } from "../api/authAPI";
+import { databaseAPI } from "./../api/databaseAPI";
 
 export default {
   userState: userReducer,
@@ -10,4 +11,5 @@ export default {
   databaseState: databaseReducer,
   overlayState: overlayReducer,
   [signInAPI.reducerPath]: signInAPI.reducer,
+  [databaseAPI.reducerPath]: databaseAPI.reducer,
 };

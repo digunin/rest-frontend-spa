@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Credentials, JSONResponse, Token } from "./types";
 import { http_methods, urls } from "./urls";
+import { transformResponse } from "../utils/transform-response";
+import { transform_error_response } from "./databaseAPI";
 
 const { HOST_URL, LOGIN_URL } = urls;
 const { POST } = http_methods;
@@ -15,13 +17,8 @@ export const signInAPI = createApi({
         method: POST,
         body,
       }),
-      transformResponse: (response: JSONResponse<Token>) => {
-        const { data, error_text } = response;
-        return data ? data : Promise.reject(error_text);
-      },
-      transformErrorResponse: (response) => {
-        return Promise.reject(response.status);
-      },
+      transformResponse: transformResponse<Token>,
+      transformErrorResponse: transform_error_response,
     }),
   }),
 });

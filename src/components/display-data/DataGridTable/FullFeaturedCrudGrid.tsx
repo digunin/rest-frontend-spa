@@ -59,7 +59,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
         }
       >
         <DataGrid
-          rows={rows}
+          rows={[...data, ...rows]}
           columns={columns}
           editMode="row"
           rowModesModel={rowModesModel}

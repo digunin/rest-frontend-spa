@@ -2,9 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DatabaseData,
   DatabaseRow,
-  deleteRow,
-  loadData,
-  sendRow,
 } from "../../../store/database/databaseSlice";
 import {
   GridActionsCellItem,
@@ -30,12 +27,15 @@ import { useAppDispatch } from "../../../store";
 import { setIsOverlayShow } from "../../../store/overlaySlice";
 import { Loop } from "@mui/icons-material";
 import { useConfirmDialog } from "./useConfirmDialog";
-import { error_messages } from "../../../utils/text";
+import {
+  useCreateRowMutation,
+  useDeleteRowMutation,
+  useUpdateRowMutation,
+} from "../../../api/databaseAPI";
 
 export type AppCallback = () => void;
 
 export const useDataGrid = (data: DatabaseData) => {
-  const [rows, setRows] = useState<DatabaseData>(data);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [abortFetch, setAbortFetch] = useState<{
     [key: RecordID]: AppCallback | undefined;
@@ -52,8 +52,10 @@ export const useDataGrid = (data: DatabaseData) => {
   const [newRows, setNewRows] = useState<DatabaseData>([]);
 
   const apiRef = useGridApiRef();
+  const [createRow] = useCreateRowMutation();
+  const [updateRow] = useUpdateRowMutation();
+  const [deleteRow] = useDeleteRowMutation();
 
-  useEffect(() => setRows([...data, ...newRows]), [data]);
   useEffect(() => {
     setTimeout(() => {
       dispatch(setIsOverlayShow(false));
@@ -89,16 +91,16 @@ export const useDataGrid = (data: DatabaseData) => {
       const processDelete = async () => {
         let errorName = "";
         dispatch(setIsOverlayShow(true));
-        const response = dispatch(deleteRow(id as RecordID));
+        const response = deleteRow(id as RecordID);
         addAbortCallback(id as RecordID, response.abort);
         await response.unwrap().catch((err: Error) => {
           errorName = err.name;
           dispatch(setIsOverlayShow(false));
         });
         removeAbortCallback(id as RecordID);
-        if (errorName === error_messages.abortedErrorName) {
-          dispatch(loadData());
-        }
+        // if (errorName === error_messages.abortedErrorName) {
+        //   dispatch(loadData());
+        // }
       };
       deleteAfterConfirm(processDelete);
     },
@@ -145,7 +147,7 @@ export const useDataGrid = (data: DatabaseData) => {
       }
       const creatingRow = newRows.find((row) => row.id === id);
       if (creatingRow) {
-        let response = dispatch(sendRow({ row: newRow }));
+        let response = createRow(newRow);
         addAbortCallback(id as RecordID, response.abort);
         await response
           .unwrap()
@@ -156,7 +158,7 @@ export const useDataGrid = (data: DatabaseData) => {
           .catch((err: Error) => (error = err));
         removeAbortCallback(id as RecordID);
       } else {
-        let response = dispatch(sendRow({ row: newRow, id }));
+        let response = updateRow({ ...newRow, id });
         addAbortCallback(id as RecordID, response.abort);
         await response
           .unwrap()
@@ -166,10 +168,7 @@ export const useDataGrid = (data: DatabaseData) => {
           .catch((err: Error) => (error = err));
         removeAbortCallback(id as RecordID);
       }
-      if (error.name || error.message) {
-        if (error.name === error_messages.abortedErrorName) {
-          dispatch(loadData());
-        }
+      if (error.message) {
         return Promise.reject();
       }
       return returnedRow;
@@ -209,12 +208,10 @@ export const useDataGrid = (data: DatabaseData) => {
 
   const addNewRow = useCallback((newRow: DatabaseRow) => {
     setNewRows((prev) => [...prev, newRow]);
-    setRows((prev) => [...prev, newRow]);
   }, []);
 
   const removeRow = useCallback((id: RecordID) => {
     setNewRows((prev) => prev.filter((row) => row.id !== id));
-    setRows((prev) => prev.filter((row) => row.id !== id));
   }, []);
 
   const addAbortCallback = useCallback((id: RecordID, aborter: AppCallback) => {
@@ -339,7 +336,7 @@ export const useDataGrid = (data: DatabaseData) => {
   };
 
   return {
-    rows,
+    rows: newRows,
     rowModesModel,
     columns,
     handlers,
