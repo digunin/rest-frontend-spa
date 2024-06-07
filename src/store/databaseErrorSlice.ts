@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { server_messages_RU } from "../utils/text";
 import { databaseAPI } from "../api/databaseAPI";
+import { signInAPI } from "../api/authAPI";
 
 const initialState = {
   error: "",
@@ -15,6 +16,12 @@ const databaseErrorSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addMatcher(
+      signInAPI.endpoints.login.matchPending,
+      (state, action) => {
+        state.error = "";
+      }
+    );
     builder.addMatcher(
       databaseAPI.endpoints.loadData.matchRejected,
       (state, action) => {
