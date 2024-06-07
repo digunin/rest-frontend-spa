@@ -5,6 +5,7 @@ export const error_messages = {
   documentNotFound: "Document not found",
   aborted: "Aborted",
   abortedErrorName: "AbortError",
+  unknown_error: "Неизвестная ошибка",
 };
 
 export const server_messages_RU: { [key: string]: string } = {
@@ -12,6 +13,8 @@ export const server_messages_RU: { [key: string]: string } = {
   ["Document not found"]: "Документ не найден",
   ["Bad request"]: "Некорректный запрос",
   ["Aborted"]: "Отмена",
+  ["FETCH_ERROR"]: "Проблема с соединением",
+  ["unknown"]: "Неизвестная ошибка",
 };
 
 export const label_text = {

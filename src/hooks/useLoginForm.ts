@@ -7,9 +7,8 @@ import {
   setLoginInputField,
   setTouchedAll,
 } from "../store/form/loginFormSlice";
-import { signIn } from "../store/userSlice";
+import { useLoginMutation } from "../api/authAPI";
 import { useForm } from "./useForm";
-import { useSignIn } from "./useSignIn";
 
 export const useLoginForm = () => {
   const inputFields = useAppSelector((state) => state.loginFormState);
@@ -18,20 +17,20 @@ export const useLoginForm = () => {
     inputFields,
     setLoginInputField
   );
-  const { loading, error } = useSignIn();
+  const [signIn, { isLoading }] = useLoginMutation();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (loading) return;
+    if (isLoading) return;
     dispatch(setTouchedAll());
     if (!isFormValid) return;
-    dispatch(signIn(formPayload))
-      .then(unwrapResult)
+    signIn(formPayload)
+      .unwrap()
       .then(() => {
         dispatch(resetForm());
       })
       .catch((err) => {});
   };
 
-  return { handleSubmit, handleChange, inputFields, loading, error };
+  return { handleSubmit, handleChange, inputFields, loading: isLoading };
 };

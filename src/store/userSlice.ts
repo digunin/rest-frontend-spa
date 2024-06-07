@@ -1,8 +1,7 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Credentials } from "../api/types";
-import api from "../api";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { NetworkInteracting } from "./../api/types";
-import { error_messages } from "../utils/text";
+import { error_messages, server_messages_RU } from "../utils/text";
+import { signInAPI } from "../api/authAPI";
 
 export type UserState = {
   username: string | null;
@@ -15,13 +14,6 @@ const initialState: UserState = {
   status: "idle",
   error: "",
 };
-
-export const signIn = createAsyncThunk(
-  "user/sign-in",
-  async (credentials: Credentials) => {
-    return await api.login(credentials).catch((err) => Promise.reject(err));
-  }
-);
 
 const userSlice = createSlice({
   name: "user",
@@ -37,23 +29,28 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(signIn.pending, (state) => {
+    builder.addMatcher(signInAPI.endpoints.login.matchPending, (state) => {
       state.status = "loading";
       state.error = "";
     });
-    builder.addCase(signIn.rejected, (state, action) => {
-      state.status = "failed";
-      state.error =
-        action.error.message === error_messages.accessDeny
-          ? error_messages.signIn
-          : action.error.message || "";
-    });
-    builder.addCase(signIn.fulfilled, (state, action) => {
-      state.status = "idle";
-      state.token = action.payload.token;
-      state.username = action.meta.arg.username;
-      state.error = "";
-    });
+    builder.addMatcher(
+      signInAPI.endpoints.login.matchRejected,
+      (state, { error: { message } }) => {
+        state.status = "failed";
+        let err =
+          message === error_messages.accessDeny ? error_messages.signIn : "";
+        state.error = err || server_messages_RU[message || "unknown"];
+      }
+    );
+    builder.addMatcher(
+      signInAPI.endpoints.login.matchFulfilled,
+      (state, { payload: { token }, meta }) => {
+        state.status = "idle";
+        state.error = "";
+        state.token = token;
+        state.username = meta.arg.originalArgs.username;
+      }
+    );
   },
 });
 
