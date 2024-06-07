@@ -43,3 +43,10 @@ export type CRUD_API = {
   ) => Promise<DatabaseRow>;
   delete: (id: RecordID, token: string, signal?: AbortSignal) => Promise<void>;
 };
+
+export const fakeCredentials: Credentials = {
+  username: "user",
+  password: "password",
+};
+
+export const fakeToken = "fake-token";

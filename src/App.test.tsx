@@ -5,7 +5,7 @@ import App from "./App";
 import { renderWithProvider } from "./utils/rtl-render-helper";
 import * as Cookie from "./utils/cookies-api";
 import { label_text } from "./utils/text";
-import { fakeCredentials, fakeToken } from "./api/fake-crudAPI";
+import { fakeCredentials, fakeToken } from "./api/types";
 
 const DELAY = 1500;
 
