@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { DataGrid, GridSlots } from "@mui/x-data-grid";
-import { DatabaseData } from "../../../store/database/databaseSlice";
+import { DatabaseData } from "../../../api/types";
 import DataGridToolbar from "./DataGridToolbar";
 import { useDataGrid } from "./useDataGrid";
 import AppConfirmDialog from "./AppConfirmDialog";

@@ -10,7 +10,8 @@ export type SingleRecord = {
 };
 
 export type RecordID = string;
-export type ResponsedSingleRecord = SingleRecord & { id: RecordID };
+export type DatabaseRow = SingleRecord & { id: RecordID };
+export type DatabaseData = Array<DatabaseRow>;
 export type Token = { token: string };
 export type Credentials = { username: string; password: string };
 export type HTTPMethods = "GET" | "POST" | "PUT" | "DELETE";
@@ -28,17 +29,17 @@ export type NetworkInteracting = { status: NetworkStatus; error: string };
 
 export type CRUD_API = {
   login: (credentials: Credentials) => Promise<Token>;
-  read: (token: string) => Promise<ResponsedSingleRecord[]>;
+  read: (token: string) => Promise<DatabaseData>;
   create: (
     record: SingleRecord,
     token: string,
     signal?: AbortSignal
-  ) => Promise<ResponsedSingleRecord>;
+  ) => Promise<DatabaseRow>;
   update: (
     record: SingleRecord,
     id: RecordID,
     token: string,
     signal?: AbortSignal
-  ) => Promise<ResponsedSingleRecord>;
+  ) => Promise<DatabaseRow>;
   delete: (id: RecordID, token: string, signal?: AbortSignal) => Promise<void>;
 };

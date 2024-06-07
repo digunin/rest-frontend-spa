@@ -1,8 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  DatabaseData,
-  DatabaseRow,
-} from "../../../store/database/databaseSlice";
+import { DatabaseData, DatabaseRow } from "../../../api/types";
 import {
   GridActionsCellItem,
   GridColDef,

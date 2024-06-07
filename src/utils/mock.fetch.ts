@@ -1,4 +1,4 @@
-import { ResponsedSingleRecord, SingleRecord, Token } from "../api/types";
+import { DatabaseData, DatabaseRow, SingleRecord, Token } from "../api/types";
 import { error_messages } from "./text";
 
 export const mock_login_success = (resolveddData: Token) =>
@@ -23,7 +23,7 @@ export const mock_login_failed = (resp: Object) =>
   });
 
 export const mock_CRUD_success = (
-  data?: SingleRecord | ResponsedSingleRecord | ResponsedSingleRecord[]
+  data?: SingleRecord | DatabaseRow | DatabaseData
 ) =>
   Promise.resolve({
     ok: true,
@@ -81,7 +81,7 @@ export const hasEmptyFields = (record: SingleRecord): boolean => {
   return false;
 };
 
-export const mocked_read_response_data: ResponsedSingleRecord[] = [
+export const mocked_read_response_data: DatabaseData = [
   {
     companySigDate: "2022-12-23T11:19:27.017Z",
     companySignatureName: "Договор.sig",

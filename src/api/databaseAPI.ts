@@ -3,9 +3,8 @@ import {
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
-import { RecordID, SingleRecord } from "./types";
+import { DatabaseData, DatabaseRow, RecordID, SingleRecord } from "./types";
 import { http_methods, urls } from "./urls";
-import { ResponsedSingleRecord } from "./types";
 import { RootState } from "../store";
 import { transformResponse } from "../utils/transform-response";
 import { error_messages } from "../utils/text";
@@ -33,34 +32,34 @@ export const databaseAPI = createApi({
     },
   }),
   endpoints: (build) => ({
-    loadData: build.query<Array<ResponsedSingleRecord>, void>({
+    loadData: build.query<Array<DatabaseRow>, void>({
       query: () => ({
         url: READ_URL,
       }),
       providesTags: (result) => {
         return result ? result.map(({ id }) => ({ type: "Rows", id })) : [];
       },
-      transformResponse: transformResponse<Array<ResponsedSingleRecord>>,
+      transformResponse: transformResponse<DatabaseData>,
       transformErrorResponse: transform_error_response,
     }),
-    createRow: build.mutation<ResponsedSingleRecord, SingleRecord>({
+    createRow: build.mutation<DatabaseRow, SingleRecord>({
       query: (body) => ({
         url: CREATE_URL,
         method: POST,
         body,
       }),
       invalidatesTags: ["Rows"],
-      transformResponse: transformResponse<ResponsedSingleRecord>,
+      transformResponse: transformResponse<DatabaseRow>,
       transformErrorResponse: transform_error_response,
     }),
-    updateRow: build.mutation<ResponsedSingleRecord, ResponsedSingleRecord>({
+    updateRow: build.mutation<DatabaseRow, DatabaseRow>({
       query: ({ id, ...body }) => ({
         url: `${UPDATE_URL}/${id}`,
         method: PUT,
         body,
       }),
       invalidatesTags: ["Rows"],
-      transformResponse: transformResponse<ResponsedSingleRecord>,
+      transformResponse: transformResponse<DatabaseRow>,
       transformErrorResponse: transform_error_response,
     }),
     deleteRow: build.mutation<void, RecordID>({
