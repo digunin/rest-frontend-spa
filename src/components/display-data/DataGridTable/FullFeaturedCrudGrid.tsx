@@ -34,7 +34,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
     apiRef,
     activeRequests,
     confirmOpen,
-  } = useDataGrid(data);
+  } = useDataGrid();
   const {
     handleAddNewRow,
     handleRowEditStop,
@@ -43,7 +43,6 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
     onProcessRowUpdateError,
     onClose,
     onConfirm,
-    abortFetch,
   } = handlers;
 
   return React.useMemo(
@@ -108,7 +107,6 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
       handleRowModesModelChange,
       processRowUpdate,
       onProcessRowUpdateError,
-      abortFetch,
       activeRequests,
       onClose,
       onConfirm,
