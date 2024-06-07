@@ -13,7 +13,7 @@ export type RecordID = string;
 export type ResponsedSingleRecord = SingleRecord & { id: RecordID };
 export type Token = { token: string };
 export type Credentials = { username: string; password: string };
-export type HTTPMethods = "GET" | "POST";
+export type HTTPMethods = "GET" | "POST" | "PUT" | "DELETE";
 export type CookieName = "username" | "token";
 
 export type JSONResponse<TResp> = {

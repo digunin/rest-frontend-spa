@@ -7,15 +7,12 @@ import {
   CRUD_API,
   HTTPMethods,
 } from "./types";
-import {
-  HOST_URL,
-  LOGIN_URL,
-  CREATE_URL,
-  READ_URL,
-  UPDATE_URL,
-  DEETE_URL,
-} from "./urls";
+import { urls, http_methods } from "./urls";
 import { genericFetch } from "../utils/fetch";
+
+const { HOST_URL, LOGIN_URL, CREATE_URL, READ_URL, UPDATE_URL, DEETE_URL } =
+  urls;
+const { GET, POST, PUT, DELETE } = http_methods;
 
 const getAuthHeaderInit = (token: string) => {
   return { "x-auth": token };
@@ -39,7 +36,7 @@ export const createFetchOptions = (
 
 export const crudAPI: CRUD_API = {
   login: async (credentials): Promise<Token> => {
-    const options = createFetchOptions("POST", {}, credentials);
+    const options = createFetchOptions(POST, {}, credentials);
     return genericFetch<Token>(new URL(LOGIN_URL, HOST_URL), options).then(
       (resp) => {
         if (resp.error_code === 0) return resp.data;
@@ -48,7 +45,7 @@ export const crudAPI: CRUD_API = {
     );
   },
   read: async (token): Promise<ResponsedSingleRecord[]> => {
-    const options = createFetchOptions("GET", getAuthHeaderInit(token));
+    const options = createFetchOptions(GET, getAuthHeaderInit(token));
     return genericFetch<ResponsedSingleRecord[]>(
       new URL(READ_URL, HOST_URL),
       options
@@ -59,7 +56,7 @@ export const crudAPI: CRUD_API = {
   },
   create: async (record, token, signal): Promise<ResponsedSingleRecord> => {
     const options = createFetchOptions(
-      "POST",
+      POST,
       getAuthHeaderInit(token),
       record,
       signal
@@ -74,7 +71,7 @@ export const crudAPI: CRUD_API = {
   },
   update: async (record, id, token, signal): Promise<ResponsedSingleRecord> => {
     const options = createFetchOptions(
-      "POST",
+      PUT,
       getAuthHeaderInit(token),
       record,
       signal
@@ -89,7 +86,7 @@ export const crudAPI: CRUD_API = {
   },
   delete: async (id, token, signal): Promise<void> => {
     const options = createFetchOptions(
-      "POST",
+      DELETE,
       getAuthHeaderInit(token),
       undefined,
       signal
