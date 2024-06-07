@@ -10,7 +10,6 @@ import { useAuth } from "../hooks/useAuth";
 import { useAppDispatch } from "../store";
 import { APP_BAR_HEIGHT } from "../utils/css-var";
 import { label_text } from "../utils/text";
-import { setData } from "../store/database/databaseSlice";
 
 const AppHeader = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +37,6 @@ const AppHeader = () => {
                 aria-label="logout"
                 sx={{ ml: 1 }}
                 onClick={() => {
-                  dispatch(setData([]));
                   dispatch(setUser({ username: null, token: null }));
                 }}
               >
