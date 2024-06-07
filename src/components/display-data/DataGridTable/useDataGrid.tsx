@@ -21,7 +21,6 @@ import { emptySingleRecord, hasEmptyFields } from "../../../utils/mock.fetch";
 import { nanoid } from "nanoid";
 import { useAppSnackbar } from "../../../hooks/useAppSnackbar";
 import { useAppDispatch } from "../../../store";
-import { setIsOverlayShow } from "../../../store/overlaySlice";
 import { Loop } from "@mui/icons-material";
 import { useConfirmDialog } from "./useConfirmDialog";
 import {
@@ -53,12 +52,6 @@ export const useDataGrid = (data: DatabaseData) => {
   const [updateRow] = useUpdateRowMutation();
   const [deleteRow] = useDeleteRowMutation();
 
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(setIsOverlayShow(false));
-    });
-  }, [data]);
-
   const handleEditClick = useCallback(
     (id: GridRowId) => () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
@@ -87,12 +80,10 @@ export const useDataGrid = (data: DatabaseData) => {
     (id: GridRowId) => () => {
       const processDelete = async () => {
         let errorName = "";
-        dispatch(setIsOverlayShow(true));
         const response = deleteRow(id as RecordID);
         addAbortCallback(id as RecordID, response.abort);
         await response.unwrap().catch((err: Error) => {
           errorName = err.name;
-          dispatch(setIsOverlayShow(false));
         });
         removeAbortCallback(id as RecordID);
         // if (errorName === error_messages.abortedErrorName) {
