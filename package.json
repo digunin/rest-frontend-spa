@@ -7,7 +7,8 @@
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",
-    "start": "webpack serve --mode development"
+    "start": "webpack serve --mode development",
+    "server": "json-server -c ./json-server/config.json -w ./json-server/db.json"
   },
   "author": "",
   "license": "ISC",
@@ -40,6 +41,7 @@
     "dotenv-webpack": "^8.1.0",
     "html-webpack-plugin": "^5.6.0",
     "jest-environment-jsdom": "^29.7.0",
+    "json-server": "^0.16.3",
     "mini-css-extract-plugin": "^2.9.0",
     "sass": "^1.77.1",
     "sass-loader": "^14.2.1",

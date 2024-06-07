@@ -1,0 +1,5 @@
+{
+  "port": 3300,
+  "delay": 700,
+  "middlewares": "./json-server/middleware.js"
+}
