@@ -6,4 +6,5 @@ module.exports = {
     "^.+\\.(j|t)sx?$": "ts-jest",
   },
   transformIgnorePatterns: [`node_modules/(?!nanoid/)`],
+  setupFiles: ["./jest.setup.js"],
 };

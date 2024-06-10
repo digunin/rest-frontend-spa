@@ -9,12 +9,19 @@ import { fakeCredentials, fakeToken } from "./api/types";
 
 const DELAY = 1500;
 
+const dbReset = async () => {
+  await fetch("http://localhost:3300/dbreset");
+};
+
 describe("App testing", () => {
   const spyGetCookie = jest.spyOn(Cookie, "getCookies");
+  jest.spyOn(console, "error").mockImplementation();
+
+  beforeAll(async () => await dbReset());
 
   test("render with user = null", async () => {
-    spyGetCookie.mockReturnValueOnce({ username: null, token: null });
     renderWithProvider(<App />);
+
     expect(
       screen.queryByRole("button", {
         name: /logout/i,
@@ -33,6 +40,7 @@ describe("App testing", () => {
         name: /logout/i,
       })
     ).toBeFalsy();
+    await waitFor(() => screen.getByLabelText(label_text.login));
     fireEvent.change(screen.getByLabelText(label_text.login), {
       target: { value: "anyuser" },
     });
@@ -73,28 +81,37 @@ describe("App testing", () => {
     expect(screen.queryByLabelText(label_text.password)).toBeFalsy();
   });
 
-  test("render with existing cookies", () => {
+  test("render with existing cookies", async () => {
     spyGetCookie.mockReturnValueOnce({
       username: "some-user",
-      token: "some-token",
+      token: fakeToken,
     });
     renderWithProvider(<App />);
-    expect(
-      screen.getByRole("button", {
-        name: /logout/i,
-      })
-    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", {
+          name: /logout/i,
+        })
+      ).toBeInTheDocument()
+    );
     expect(screen.queryByLabelText(label_text.login)).toBeFalsy();
     expect(screen.queryByLabelText(label_text.password)).toBeFalsy();
     expect(screen.getByText("some-user")).toBeInTheDocument();
   });
 
-  test("test 'logout' button", () => {
+  test("test 'logout' button", async () => {
     spyGetCookie.mockReturnValueOnce({
       username: "some-user",
-      token: "some-token",
+      token: fakeToken,
     });
     renderWithProvider(<App />);
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", {
+          name: /logout/i,
+        })
+      ).toBeInTheDocument()
+    );
     fireEvent.click(
       screen.getByRole("button", {
         name: /logout/i,
@@ -176,7 +193,7 @@ describe("App testing", () => {
     expect(edit_delete_button.length).toBe(3);
     expect(edit_delete_button[0]).toHaveAttribute("aria-label", "Edit");
     expect(edit_delete_button[1]).toHaveAttribute("aria-label", "Delete");
-    expect(edit_delete_button[2]).toHaveAttribute("aria-label", "Abort");
+    expect(edit_delete_button[2]).toHaveAttribute("aria-label", "indicator");
     fireEvent.click(edit_delete_button[0]);
     await waitFor(() =>
       expect(
@@ -199,7 +216,7 @@ describe("App testing", () => {
     expect(save_cancel_button.length).toBe(3);
     expect(save_cancel_button[0]).toHaveAttribute("aria-label", "Save");
     expect(save_cancel_button[1]).toHaveAttribute("aria-label", "Cancel");
-    expect(save_cancel_button[2]).toHaveAttribute("aria-label", "Abort");
+    expect(save_cancel_button[2]).toHaveAttribute("aria-label", "indicator");
     fireEvent.click(save_cancel_button[0]);
     await waitFor(() =>
       expect(screen.queryByRole("menuitem", { name: /save/i })).toBeFalsy()
