@@ -47,16 +47,7 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
 
   return React.useMemo(
     () => (
-      <Box
-        sx={
-          testMode
-            ? testBoxStyles
-            : {
-                height: "65vh",
-                ...commonBoxStyles,
-              }
-        }
-      >
+      <Box sx={testMode ? testBoxStyles : commonBoxStyles}>
         <DataGrid
           rows={[...data, ...rows]}
           columns={columns}
@@ -75,16 +66,16 @@ const FullFeaturedCrudGrid: React.FC<CrudDataGrid> = ({ data, loading }) => {
           initialState={{
             pagination: testMode
               ? { paginationModel: { pageSize: 10 } }
-              : undefined,
+              : { paginationModel: { pageSize: 5 } },
             sorting: {
               sortModel: [{ field: "employeeSigDate", sort: "desc" }],
             },
           }}
-          sx={{ minHeight: testMode ? 450 : "auto", p: 1 }}
+          sx={{ minHeight: 450, p: 1 }}
           apiRef={apiRef}
           loading={loading && !activeRequests}
           pageSizeOptions={[5, 10, 25, 50, 100]}
-          autoPageSize={testMode ? false : true}
+          autoHeight={testMode ? false : true}
         />
         <AppConfirmDialog
           title="Подтвердите удаление"
