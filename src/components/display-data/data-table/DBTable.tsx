@@ -3,6 +3,7 @@ import DBTableHeader from "./DBTableHeader";
 import DBTableRow from "./DBTableRow";
 import { Breakpoint, useMediaQuery, useTheme } from "@mui/material";
 import { DatabaseData } from "../../../api/types";
+import DBTableRowExpandable from "./DBTableRowExpandable";
 
 type DBTableProps = {
   data: DatabaseData;
@@ -22,13 +23,21 @@ const DatabaseTable: FC<DBTableProps> = ({
       {oneLineRow && (
         <DBTableHeader oneLineRowBreakpoint={oneLineRowBreakpoint} />
       )}
-      {data.map((row) => (
-        <DBTableRow
-          key={row.id}
-          row={row}
-          oneLineRowBreakpoint={oneLineRowBreakpoint}
-        />
-      ))}
+      {data.map((row) =>
+        oneLineRow ? (
+          <DBTableRow
+            key={row.id}
+            row={row}
+            oneLineRowBreakpoint={oneLineRowBreakpoint}
+          />
+        ) : (
+          <DBTableRowExpandable
+            key={row.id}
+            row={row}
+            oneLineRowBreakpoint={oneLineRowBreakpoint}
+          />
+        )
+      )}
     </div>
   );
 };
