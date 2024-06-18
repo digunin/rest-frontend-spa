@@ -5,12 +5,14 @@ import { InputField } from "../../../store/form/types";
 
 export type TIProps = TextFieldProps & {
   inputField: InputField;
+  needHelperText?: boolean;
   onchange: (value: string, error: string) => void;
 };
 
 const TextInput: FC<TIProps> = ({
   inputField,
   onchange,
+  needHelperText = true,
   ...textFieldProps
 }) => {
   const { value, error, unTouched } = inputField;
@@ -18,7 +20,7 @@ const TextInput: FC<TIProps> = ({
     <TextField
       value={value}
       error={!unTouched && !!error}
-      helperText={(!unTouched && error) || " "}
+      helperText={needHelperText ? (!unTouched && error) || " " : ""}
       onChange={(e) => onchange(e.target.value, "")}
       {...textFieldProps}
     ></TextField>
