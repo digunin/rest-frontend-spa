@@ -76,9 +76,9 @@ describe("password input test", () => {
       name: /toggle password visibility/i,
     });
     expect(showPassButton).toBeInTheDocument();
-    checkFalsyTextRender(value_text, defaultProps.label, "password");
+    checkFalsyTextRender(value_text, defaultProps.label as string, "password");
     checkPasswordVisibilityButton(showPassButton, value_text);
-    checkFalsyTextRender(value_text, defaultProps.label, "password");
+    checkFalsyTextRender(value_text, defaultProps.label as string, "password");
   });
 
   test("error render", () => {
@@ -94,7 +94,7 @@ describe("password input test", () => {
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(
       defaultProps.inputField.value,
-      defaultProps.label,
+      defaultProps.label as string,
       "password"
     );
     checkPasswordVisibilityButton(
@@ -104,7 +104,7 @@ describe("password input test", () => {
     expect(screen.queryByText(error_text)).toBeFalsy();
     checkFalsyTextRender(
       defaultProps.inputField.value,
-      defaultProps.label,
+      defaultProps.label as string,
       "password"
     );
   });
@@ -122,7 +122,7 @@ describe("password input test", () => {
     expect(showPassButton).toBeInTheDocument();
     checkFalsyTextRender(
       defaultProps.inputField.value,
-      defaultProps.label,
+      defaultProps.label as string,
       "password"
     );
     checkPasswordVisibilityButton(
@@ -132,7 +132,7 @@ describe("password input test", () => {
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
     checkFalsyTextRender(
       defaultProps.inputField.value,
-      defaultProps.label,
+      defaultProps.label as string,
       "password"
     );
   });
@@ -148,10 +148,10 @@ describe("password input test", () => {
       name: /toggle password visibility/i,
     });
     expect(showPassButton).toBeInTheDocument();
-    checkFalsyTextRender(value_text, defaultProps.label, "password");
+    checkFalsyTextRender(value_text, defaultProps.label as string, "password");
     checkPasswordVisibilityButton(showPassButton, value_text);
     expect(screen.queryByText(error_text)).toBeFalsy();
-    checkFalsyTextRender(value_text, defaultProps.label, "password");
+    checkFalsyTextRender(value_text, defaultProps.label as string, "password");
   });
 
   test("value, error render, unTouched = false", () => {
@@ -165,9 +165,9 @@ describe("password input test", () => {
       name: /toggle password visibility/i,
     });
     expect(showPassButton).toBeInTheDocument();
-    checkFalsyTextRender(value_text, defaultProps.label, "password");
+    checkFalsyTextRender(value_text, defaultProps.label as string, "password");
     checkPasswordVisibilityButton(showPassButton, value_text);
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
-    checkFalsyTextRender(value_text, defaultProps.label, "password");
+    checkFalsyTextRender(value_text, defaultProps.label as string, "password");
   });
 });

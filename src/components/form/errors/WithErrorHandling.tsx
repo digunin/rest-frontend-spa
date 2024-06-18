@@ -11,8 +11,13 @@ export type WithHandlingError = {
 const WithErrorHandling = (
   Child: React.ComponentType<TIProps>
 ): React.ComponentType<WithHandlingError & TIProps> => {
-  return (props) => {
-    const { onchange, validateHelpers, mutators, validateOptions } = props;
+  return ({
+    validateHelpers,
+    mutators,
+    validateOptions,
+    onchange,
+    ...props
+  }) => {
     const newOnchange: typeof onchange = (value, error) => {
       if (mutators) {
         mutators.forEach((mutator) => (value = mutator(value)));

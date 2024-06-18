@@ -51,7 +51,10 @@ describe("TextInput test", () => {
 
   test("default props render", () => {
     render(<TextInput {...defaultProps} />);
-    checkFalsyTextRender(defaultProps.inputField.value, defaultProps.label);
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label as string
+    );
   });
 
   test("label render", () => {
@@ -63,7 +66,7 @@ describe("TextInput test", () => {
     render(
       <TextInput {...defaultProps} inputField={createInputField(value_text)} />
     );
-    checkFalsyTextRender(value_text, defaultProps.label);
+    checkFalsyTextRender(value_text, defaultProps.label as string);
   });
 
   test("error render", () => {
@@ -74,7 +77,10 @@ describe("TextInput test", () => {
       />
     );
     expect(screen.queryByText(error_text)).toBeFalsy();
-    checkFalsyTextRender(defaultProps.inputField.value, defaultProps.label);
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label as string
+    );
   });
 
   test("error render, unTouched = false", () => {
@@ -85,7 +91,10 @@ describe("TextInput test", () => {
       />
     );
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
-    checkFalsyTextRender(defaultProps.inputField.value, defaultProps.label);
+    checkFalsyTextRender(
+      defaultProps.inputField.value,
+      defaultProps.label as string
+    );
   });
 
   test("value, error render", () => {
@@ -96,7 +105,7 @@ describe("TextInput test", () => {
       />
     );
     expect(screen.queryByText(error_text)).toBeFalsy();
-    checkFalsyTextRender(value_text, defaultProps.label);
+    checkFalsyTextRender(value_text, defaultProps.label as string);
   });
 
   test("value, error render, unTouched = false", () => {
@@ -107,6 +116,6 @@ describe("TextInput test", () => {
       />
     );
     expect(screen.getByText(error_text)).toHaveClass(MUI_helper_text_class);
-    checkFalsyTextRender(value_text, defaultProps.label);
+    checkFalsyTextRender(value_text, defaultProps.label as string);
   });
 });

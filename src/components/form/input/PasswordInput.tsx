@@ -10,7 +10,6 @@ const PasswordInput: FC<PIProps & WithHandlingError> = (props) => {
   const { type, handleCLick, passwordVisibility } = useTextInput(true);
   return (
     <TextInput
-      password={true}
       type={type}
       InputProps={{
         endAdornment: (
