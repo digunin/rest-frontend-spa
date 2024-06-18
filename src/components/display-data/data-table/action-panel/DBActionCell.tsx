@@ -8,7 +8,7 @@ import DBActionPanel, {
 
 type DBACell = ViewModeCallbacks &
   EditModeCallbacks &
-  Omit<DBCell, "label" | "value"> & { isLoading?: boolean };
+  Omit<DBCell, "label" | "value"> & { isLoading?: boolean; editMode?: boolean };
 
 const DBActionCell: FC<DBACell> = ({
   isHead,

@@ -51,7 +51,6 @@ const DBTableRow: FC<TRProps> = ({ row, editMode, oneLineRowBreakpoint }) => {
             key={`${row.id}-${columnName}`}
             value={row[columnKey]}
             label={columnName}
-            editMode={editMode}
             columnType={type}
             oneLineRow={oneLineRow}
             {...gridProps}

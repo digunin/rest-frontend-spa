@@ -3,7 +3,6 @@ import React, { FC } from "react";
 import { ColumnType } from "./column-settings";
 
 export type DBCell = GridProps & {
-  editMode?: boolean;
   value: string;
   label: string;
   isHead?: boolean;
@@ -15,7 +14,6 @@ const DBTableCell: FC<DBCell> = ({
   value,
   label,
   isHead,
-  editMode,
   oneLineRow,
   columnType = "text",
   ...gridProps
