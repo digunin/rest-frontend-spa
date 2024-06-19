@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Breakpoint, Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Grid } from "@mui/material";
 import { DatabaseRow } from "../../../api/types";
 import DBTableCell from "./DBTableCell";
 import { columnsDef } from "./column-settings";
@@ -10,21 +10,19 @@ import { FormState } from "../../../store/form/types";
 
 export type TRProps = {
   row?: DatabaseRow;
-  oneLineRowBreakpoint: Breakpoint;
+  oneLineRow?: boolean;
   inputFields?: FormState<"dbrecord">;
 } & DBHandlers;
 
 const DBTableRow: FC<TRProps> = ({
   row,
   inputFields,
-  oneLineRowBreakpoint,
+  oneLineRow,
   oninput,
   onedit,
   ondelete,
   ...handlers
 }) => {
-  const theme = useTheme();
-  const oneLineRow = useMediaQuery(theme.breakpoints.up(oneLineRowBreakpoint));
   const editMode = !!inputFields;
 
   return (

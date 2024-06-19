@@ -36,19 +36,14 @@ const DatabaseTable: FC<DBTableProps> = ({
   const oneLineRow = useMediaQuery(theme.breakpoints.up(oneLineRowBreakpoint));
   return (
     <div className="database-table">
-      {oneLineRow && (
-        <DBTableHeader
-          oneLineRowBreakpoint={oneLineRowBreakpoint}
-          {...handlers}
-        />
-      )}
+      {oneLineRow && <DBTableHeader oneLineRow={oneLineRow} {...handlers} />}
       {data.map((row) =>
         oneLineRow ? (
           <DBTableRow
             key={row.id}
             row={row}
             inputFields={isEdit === row.id ? inputFields : undefined}
-            oneLineRowBreakpoint={oneLineRowBreakpoint}
+            oneLineRow={oneLineRow}
             {...handlers}
           />
         ) : (
@@ -56,7 +51,7 @@ const DatabaseTable: FC<DBTableProps> = ({
             key={row.id}
             row={row}
             inputFields={isEdit === row.id ? inputFields : undefined}
-            oneLineRowBreakpoint={oneLineRowBreakpoint}
+            oneLineRow={oneLineRow}
             {...handlers}
           />
         )
