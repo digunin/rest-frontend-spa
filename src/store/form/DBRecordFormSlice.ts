@@ -3,7 +3,6 @@ import { createSliceOptions, isFormValid } from "./formPattern";
 import { formReducerWithPreparedPayload } from "./formPattern";
 import { defaulInputField } from "./types";
 import { RootState } from "..";
-import { error_messages } from "../../utils/text";
 
 const DBRecordSlice = createSlice(
   createSliceOptions(
@@ -12,19 +11,17 @@ const DBRecordSlice = createSlice(
       setDbrecordInputField: formReducerWithPreparedPayload,
     },
     {
-      employeeNumber: { ...defaulInputField, error: error_messages.notEmpty },
-      employeeSigDate: { ...defaulInputField, error: error_messages.notEmpty },
-      documentStatus: { ...defaulInputField, error: error_messages.notEmpty },
-      documentType: { ...defaulInputField, error: error_messages.notEmpty },
-      documentName: { ...defaulInputField, error: error_messages.notEmpty },
-      companySigDate: { ...defaulInputField, error: error_messages.notEmpty },
+      employeeNumber: { ...defaulInputField },
+      employeeSigDate: { ...defaulInputField },
+      documentStatus: { ...defaulInputField },
+      documentType: { ...defaulInputField },
+      documentName: { ...defaulInputField },
+      companySigDate: { ...defaulInputField },
       companySignatureName: {
         ...defaulInputField,
-        error: error_messages.notEmpty,
       },
       employeeSignatureName: {
         ...defaulInputField,
-        error: error_messages.notEmpty,
       },
     }
   )
