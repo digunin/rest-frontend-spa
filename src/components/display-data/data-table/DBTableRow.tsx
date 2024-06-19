@@ -7,6 +7,7 @@ import DBActionCell from "./action-panel/DBActionCell";
 import DBEditingTableCell from "./DBEditingTableCell";
 import { DBHandlers } from "./DBTable";
 import { FormState } from "../../../store/form/types";
+import { notEmpty } from "../../form/errors";
 
 export type TRProps = {
   row?: DatabaseRow;
@@ -64,6 +65,7 @@ const DBTableRow: FC<TRProps> = ({
             oneLineRow={oneLineRow}
             gridProps={gridProps}
             onchange={oninput(columnKey)}
+            validateHelpers={[notEmpty]}
           />
         ) : (
           <DBTableCell

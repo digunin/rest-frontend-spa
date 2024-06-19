@@ -41,6 +41,9 @@ const DBEditingTableCell: FC<EditingTableCell> = ({
           },
         }}
         {...textFieldProps}
+        validateHelpers={validateHelpers}
+        validateOptions={validateOptions}
+        mutators={mutators}
         onchange={onchange}
       />
     </Grid>
