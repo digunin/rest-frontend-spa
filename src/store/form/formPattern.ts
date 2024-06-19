@@ -1,5 +1,11 @@
 import { PayloadAction, PrepareAction } from "@reduxjs/toolkit";
-import { FormReducer, FormState, ReducerName, WithInputField } from "./types";
+import {
+  FormPayload,
+  FormReducer,
+  FormState,
+  ReducerName,
+  WithInputField,
+} from "./types";
 import { FormName, TypeOfFieldName } from "./setup-forms.types";
 
 export const createSliceOptions = <N extends FormName>(
@@ -18,9 +24,15 @@ export const createSliceOptions = <N extends FormName>(
     reducers: {
       setInitialValues: (
         state: FormState<N>,
-        action: PayloadAction<FormState<N>>
+        action: PayloadAction<FormPayload<N>>
       ) => {
-        return action.payload;
+        const { payload } = action;
+
+        Object.keys(payload).forEach(
+          (fieldName) =>
+            (state[fieldName as TypeOfFieldName<N>].value =
+              payload[fieldName as TypeOfFieldName<N>])
+        );
       },
       setTouchedAll: (state: FormState<N>) => {
         for (let name of Object.keys(state)) {
