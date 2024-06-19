@@ -1,9 +1,8 @@
 import React, { FC } from "react";
 import DBTableHeader from "./DBTableHeader";
-import DBTableRow from "./DBTableRow";
+import DBTableRow from "./DBTableResponsiveRow";
 import { Breakpoint, useMediaQuery, useTheme } from "@mui/material";
 import { DatabaseData, RecordID, SingleRecord } from "../../../api/types";
-import DBTableRowExpandable from "./DBTableRowExpandable";
 import { FormState } from "../../../store/form/types";
 
 type DBTableProps = {
@@ -37,25 +36,15 @@ const DatabaseTable: FC<DBTableProps> = ({
   return (
     <div className="database-table">
       {oneLineRow && <DBTableHeader oneLineRow={oneLineRow} {...handlers} />}
-      {data.map((row) =>
-        oneLineRow ? (
-          <DBTableRow
-            key={row.id}
-            row={row}
-            inputFields={isEdit === row.id ? inputFields : undefined}
-            oneLineRow={oneLineRow}
-            {...handlers}
-          />
-        ) : (
-          <DBTableRowExpandable
-            key={row.id}
-            row={row}
-            inputFields={isEdit === row.id ? inputFields : undefined}
-            oneLineRow={oneLineRow}
-            {...handlers}
-          />
-        )
-      )}
+      {data.map((row) => (
+        <DBTableRow
+          key={row.id}
+          row={row}
+          inputFields={isEdit === row.id ? inputFields : undefined}
+          oneLineRow={oneLineRow}
+          {...handlers}
+        />
+      ))}
     </div>
   );
 };
