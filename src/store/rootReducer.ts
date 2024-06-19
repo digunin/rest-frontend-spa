@@ -4,7 +4,7 @@ import dbRecordFormReducer from "./form/DBRecordFormSlice";
 import { signInAPI } from "../api/authAPI";
 import { databaseAPI } from "./../api/databaseAPI";
 import databaseErrorReducer from "./databaseErrorSlice";
-import editedRecordReducer from "./editedRecordSlice";
+import dbRowModeReducer from "./dbRowModeSlice";
 
 export default {
   userState: userReducer,
@@ -13,5 +13,5 @@ export default {
   databaseErrorState: databaseErrorReducer,
   [signInAPI.reducerPath]: signInAPI.reducer,
   [databaseAPI.reducerPath]: databaseAPI.reducer,
-  editedRecordState: editedRecordReducer,
+  dbRowModeState: dbRowModeReducer,
 };
