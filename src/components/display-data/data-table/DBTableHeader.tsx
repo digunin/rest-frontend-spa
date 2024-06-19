@@ -1,13 +1,8 @@
 import React from "react";
-import DBTableRow from "./DBTableRow";
-import { Breakpoint } from "@mui/material";
+import DBTableRow, { TRProps } from "./DBTableRow";
 
-const DBTableHeader = ({
-  oneLineRowBreakpoint,
-}: {
-  oneLineRowBreakpoint: Breakpoint;
-}) => {
-  return <DBTableRow oneLineRowBreakpoint={oneLineRowBreakpoint} />;
+const DBTableHeader = (props: TRProps) => {
+  return <DBTableRow {...props} />;
 };
 
 export default DBTableHeader;

@@ -5,20 +5,27 @@ import DBTableCell from "./DBTableCell";
 import { columnsDef } from "./column-settings";
 import DBActionCell from "./action-panel/DBActionCell";
 import DBEditingTableCell from "./DBEditingTableCell";
+import { DBHandlers } from "./DBTable";
+import { FormState } from "../../../store/form/types";
 
 export type TRProps = {
   row?: DatabaseRow;
-  editMode?: boolean;
   oneLineRowBreakpoint: Breakpoint;
-};
+  inputFields?: FormState<"dbrecord">;
+} & DBHandlers;
 
 const DBTableRow: FC<TRProps> = ({
   row,
-  editMode = true,
+  inputFields,
   oneLineRowBreakpoint,
+  oninput,
+  onedit,
+  ondelete,
+  ...handlers
 }) => {
   const theme = useTheme();
   const oneLineRow = useMediaQuery(theme.breakpoints.up(oneLineRowBreakpoint));
+  const editMode = !!inputFields;
 
   return (
     <Grid container className="table-row">
@@ -43,10 +50,9 @@ const DBTableRow: FC<TRProps> = ({
               {...gridProps}
               editMode={editMode}
               key={`${row.id}-actions`}
-              onedit={() => console.log("edit: ", row.id)}
-              ondelete={() => console.log("delete: ", row.id)}
-              oncancel={() => console.log("cancel: ", row.id)}
-              onsave={() => console.log("save: ", row.id)}
+              onedit={() => onedit(row.id)}
+              ondelete={() => ondelete(row.id)}
+              {...handlers}
             />
           );
         }
@@ -55,17 +61,11 @@ const DBTableRow: FC<TRProps> = ({
           <DBEditingTableCell
             key={`${row.id}-${columnName}`}
             label={columnName}
-            inputField={{
-              value: row[columnKey],
-              error: "Ошибка",
-              unTouched: false,
-            }}
+            inputField={inputFields[columnKey]}
             columnType={type}
             oneLineRow={oneLineRow}
             gridProps={gridProps}
-            onchange={(value, error) =>
-              console.log("value: ", value, "error: ", error)
-            }
+            onchange={oninput(columnKey)}
           />
         ) : (
           <DBTableCell
