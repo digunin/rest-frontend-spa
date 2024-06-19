@@ -25,18 +25,14 @@ const Login = () => {
           label={label_text.login}
           inputField={username}
           validateHelpers={[notEmpty]}
-          onchange={(value, error) => {
-            handleChange("username", value, error);
-          }}
+          onchange={handleChange("username")}
         ></TextInput>
         <PasswordInput
           fullWidth
           label={label_text.password}
           inputField={password}
           validateHelpers={[notEmpty]}
-          onchange={(value, error) => {
-            handleChange("password", value, error);
-          }}
+          onchange={handleChange("password")}
         ></PasswordInput>
         <Button
           sx={{ mb: 1, mt: 1 }}

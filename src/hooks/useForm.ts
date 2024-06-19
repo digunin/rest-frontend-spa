@@ -13,12 +13,10 @@ export const useForm = <N extends FormName>(
   const dispatch = useAppDispatch();
   const formPayload = createFormPayload(inputFields);
 
-  const handleChange = (
-    name: TypeOfFieldName<N>,
-    value: string,
-    error: string
-  ) => {
-    dispatch(reducer(name, value, error));
+  const handleChange = (name: TypeOfFieldName<N>) => {
+    return (value: string, error: string) => {
+      dispatch(reducer(name, value, error));
+    };
   };
   return { formPayload, handleChange, dispatch };
 };
