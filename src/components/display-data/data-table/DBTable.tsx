@@ -7,7 +7,6 @@ import { FormState } from "../../../store/form/types";
 
 type DBTableProps = {
   data: DatabaseData;
-  loading: boolean;
   oneLineRowBreakpoint: Breakpoint;
   isCreate: boolean;
   isEdit: RecordID | null;
@@ -24,7 +23,6 @@ export type DBHandlers = {
 
 const DatabaseTable: FC<DBTableProps> = ({
   data,
-  loading,
   oneLineRowBreakpoint,
   isCreate,
   isEdit,
