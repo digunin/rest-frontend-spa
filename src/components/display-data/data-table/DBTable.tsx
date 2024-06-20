@@ -1,9 +1,16 @@
 import React, { FC } from "react";
 import DBTableHeader from "./DBTableHeader";
 import DBTableRow from "./DBTableResponsiveRow";
-import { Breakpoint, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Breakpoint,
+  Button,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { DatabaseData, RecordID, SingleRecord } from "../../../api/types";
 import { FormState } from "../../../store/form/types";
+import { label_text } from "../../../utils/text";
 
 type DBTableProps = {
   data: DatabaseData;
@@ -19,6 +26,7 @@ export type DBHandlers = {
   oncancel: () => void;
   onsave: () => void;
   oninput: (name: keyof SingleRecord) => (value: string, error: string) => void;
+  onCreate: () => void;
 };
 
 const DatabaseTable: FC<DBTableProps> = ({
@@ -27,12 +35,18 @@ const DatabaseTable: FC<DBTableProps> = ({
   isCreate,
   isEdit,
   inputFields,
+  onCreate,
   ...handlers
 }) => {
   const theme = useTheme();
   const oneLineRow = useMediaQuery(theme.breakpoints.up(oneLineRowBreakpoint));
   return (
     <div className="database-table">
+      <Box>
+        <Button variant="outlined" onClick={onCreate} sx={{ m: 1 }}>
+          {label_text.addNewRecord}
+        </Button>
+      </Box>
       {oneLineRow && <DBTableHeader oneLineRow={oneLineRow} {...handlers} />}
       {data.map((row) => (
         <DBTableRow
@@ -43,6 +57,14 @@ const DatabaseTable: FC<DBTableProps> = ({
           {...handlers}
         />
       ))}
+      {isCreate && (
+        <DBTableRow
+          key="new-row"
+          inputFields={inputFields}
+          oneLineRow={oneLineRow}
+          {...handlers}
+        />
+      )}
     </div>
   );
 };

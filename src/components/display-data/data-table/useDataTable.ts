@@ -14,7 +14,11 @@ import {
   useUpdateRowMutation,
 } from "../../../api/databaseAPI";
 import { DatabaseRow, RecordID } from "../../../api/types";
-import { setEditMode, setViewMode } from "../../../store/dbRowModeSlice";
+import {
+  setCreateMoode,
+  setEditMode,
+  setViewMode,
+} from "../../../store/dbRowModeSlice";
 
 export const useDataTable = () => {
   const { isCreate, isEdit } = useAppSelector((state) => state.dbRowModeState);
@@ -66,12 +70,17 @@ export const useDataTable = () => {
     deleteRow(id);
   };
 
+  const onCreate = () => {
+    dispatch(setCreateMoode());
+  };
+
   return {
     oninput: handleChange,
     onedit,
     ondelete,
     onsave,
     oncancel,
+    onCreate,
     isCreate,
     isEdit,
     inputFields,

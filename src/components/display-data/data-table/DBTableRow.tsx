@@ -13,7 +13,7 @@ export type TRProps = {
   row?: DatabaseRow;
   oneLineRow?: boolean;
   inputFields?: FormState<"dbrecord">;
-} & DBHandlers;
+} & Omit<DBHandlers, "onCreate">;
 
 const DBTableRow: FC<TRProps> = ({
   row,
@@ -25,13 +25,15 @@ const DBTableRow: FC<TRProps> = ({
   ...handlers
 }) => {
   const editMode = !!inputFields;
+  const createMode = !row && !!inputFields;
+  const isHeader = !row && !inputFields;
 
   return (
     <Grid container className="table-row">
       {columnsDef.map((col_def) => {
         const { columnKey, columnName, type, ...gridProps } = col_def;
 
-        if (!row)
+        if (isHeader)
           return (
             <DBTableCell
               key={`header-${columnName}`}
@@ -48,17 +50,17 @@ const DBTableRow: FC<TRProps> = ({
             <DBActionCell
               {...gridProps}
               editMode={editMode}
-              key={`${row.id}-actions`}
-              onedit={() => onedit(row.id)}
-              ondelete={() => ondelete(row.id)}
+              key={`${row?.id || "new-row"}-actions`}
+              onedit={() => onedit(createMode ? "" : row!.id)}
+              ondelete={() => ondelete(createMode ? "" : row!.id)}
               {...handlers}
             />
           );
         }
 
-        return editMode ? (
+        return editMode || createMode ? (
           <DBEditingTableCell
-            key={`${row.id}-${columnName}`}
+            key={`${row?.id || "new-row"}-${columnName}`}
             label={columnName}
             inputField={inputFields[columnKey]}
             columnType={type}
@@ -69,8 +71,8 @@ const DBTableRow: FC<TRProps> = ({
           />
         ) : (
           <DBTableCell
-            key={`${row.id}-${columnName}`}
-            value={row[columnKey]}
+            key={`${row!.id}-${columnName}`}
+            value={row![columnKey]}
             label={columnName}
             columnType={type}
             oneLineRow={oneLineRow}
