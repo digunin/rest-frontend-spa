@@ -52,4 +52,4 @@ const DBTableCell: FC<DBCell> = ({
   );
 };
 
-export default DBTableCell;
+export default React.memo(DBTableCell);

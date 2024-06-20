@@ -29,4 +29,4 @@ const IconLoader = ({ spin }: { spin: boolean }) => {
   );
 };
 
-export default IconLoader;
+export default React.memo(IconLoader);

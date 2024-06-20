@@ -19,6 +19,7 @@ import {
   setEditMode,
   setViewMode,
 } from "../../../store/dbRowModeSlice";
+import { useCallback } from "react";
 
 export const useDataTable = () => {
   const { isCreate, isEdit } = useAppSelector((state) => state.dbRowModeState);
@@ -34,7 +35,7 @@ export const useDataTable = () => {
   const [updateRow] = useUpdateRowMutation();
   const [deleteRow] = useDeleteRowMutation();
 
-  const onsave = () => {
+  const onsave = useCallback(() => {
     dispatch(setTouchedAll());
     if (!isFormValid) return;
     if (isCreate)
@@ -53,26 +54,31 @@ export const useDataTable = () => {
           dispatch(setViewMode());
         })
         .catch((err) => {});
-  };
+  }, [isFormValid, isCreate, formPayload, isEdit]);
 
-  const onedit = (id: RecordID) => {
-    dispatch(setEditMode(id));
-    const { id: _, ...row } = data!.find((row) => row.id === id) as DatabaseRow;
-    dispatch(setInitialValues(row));
-  };
+  const onedit = useCallback(
+    (id: RecordID) => {
+      dispatch(setEditMode(id));
+      const { id: _, ...row } = data!.find(
+        (row) => row.id === id
+      ) as DatabaseRow;
+      dispatch(setInitialValues(row));
+    },
+    [data]
+  );
 
-  const oncancel = () => {
+  const oncancel = useCallback(() => {
     dispatch(setViewMode());
     dispatch(resetForm());
-  };
+  }, []);
 
-  const ondelete = (id: RecordID) => {
+  const ondelete = useCallback((id: RecordID) => {
     deleteRow(id);
-  };
+  }, []);
 
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     dispatch(setCreateMoode());
-  };
+  }, []);
 
   return {
     oninput: handleChange,

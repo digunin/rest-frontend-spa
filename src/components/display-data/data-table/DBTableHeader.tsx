@@ -5,4 +5,7 @@ const DBTableHeader = (props: TRProps) => {
   return <DBTableRow {...props} />;
 };
 
-export default DBTableHeader;
+export default React.memo(
+  DBTableHeader,
+  (prev, next) => prev.oneLineRow === next.oneLineRow
+);

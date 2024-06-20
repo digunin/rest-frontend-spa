@@ -27,6 +27,7 @@ const DBTableRow: FC<TRProps> = ({
   const editMode = !!inputFields;
   const createMode = !row && !!inputFields;
   const isHeader = !row && !inputFields;
+  const validator = React.useMemo(() => [notEmpty], []);
 
   return (
     <Grid container className="table-row">
@@ -67,7 +68,7 @@ const DBTableRow: FC<TRProps> = ({
             oneLineRow={oneLineRow}
             gridProps={gridProps}
             onchange={oninput(columnKey)}
-            validateHelpers={[notEmpty]}
+            validateHelpers={validator}
           />
         ) : (
           <DBTableCell

@@ -23,30 +23,33 @@ const DBEditingTableCell: FC<EditingTableCell> = ({
   const { value, error } = inputField;
   const toolTip = error || "";
 
-  return (
-    <Grid item {...gridProps}>
-      <TextInput
-        fullWidth
-        title={oneLineRow ? error || "" : ""}
-        inputField={inputField}
-        variant={"outlined"}
-        label={oneLineRow ? "" : label}
-        hiddenLabel={oneLineRow}
-        needHelperText={!oneLineRow}
-        margin={oneLineRow ? "none" : "dense"}
-        sx={{
-          "& .MuiInputBase-input": {
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          },
-        }}
-        {...textFieldProps}
-        validateHelpers={validateHelpers}
-        validateOptions={validateOptions}
-        mutators={mutators}
-        onchange={onchange}
-      />
-    </Grid>
+  return React.useMemo(
+    () => (
+      <Grid item {...gridProps}>
+        <TextInput
+          fullWidth
+          title={oneLineRow ? error || "" : ""}
+          inputField={inputField}
+          variant={"outlined"}
+          label={oneLineRow ? "" : label}
+          hiddenLabel={oneLineRow}
+          needHelperText={!oneLineRow}
+          margin={oneLineRow ? "none" : "dense"}
+          sx={{
+            "& .MuiInputBase-input": {
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            },
+          }}
+          {...textFieldProps}
+          validateHelpers={validateHelpers}
+          validateOptions={validateOptions}
+          mutators={mutators}
+          onchange={onchange}
+        />
+      </Grid>
+    ),
+    [oneLineRow, label, inputField, validateHelpers, validateOptions, mutators]
   );
 };
 
