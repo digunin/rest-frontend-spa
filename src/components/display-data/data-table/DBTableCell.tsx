@@ -18,14 +18,15 @@ const DBTableCell: FC<DBCell> = ({
   columnType = "text",
   ...gridProps
 }) => {
-  const toolTip =
+  const [toolTip, correctValue] =
     !isHead && columnType === "date-time"
-      ? new Date(value).toLocaleString()
-      : value;
-  const correctValue =
-    !isHead && columnType === "date-time"
-      ? new Date(value).toLocaleDateString()
-      : value;
+      ? oneLineRow
+        ? [
+            new Date(value).toLocaleString(),
+            new Date(value).toLocaleDateString(),
+          ]
+        : [new Date(value).toLocaleString(), new Date(value).toLocaleString()]
+      : [value, value];
 
   return (
     <Grid item {...gridProps}>

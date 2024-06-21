@@ -3,6 +3,7 @@ import { DBCell } from "./DBTableCell";
 import { WithHandlingError } from "../../form/errors/WithErrorHandling";
 import { Grid, GridProps } from "@mui/material";
 import TextInput, { TIProps } from "../../form/input/TextInput";
+import DateTimeInput from "../../form/input/DateTimeInput";
 
 type EditingTableCell = Omit<DBCell, "value" | "editMode" | "isHead"> &
   WithHandlingError &
@@ -23,30 +24,34 @@ const DBEditingTableCell: FC<EditingTableCell> = ({
   const { value, error } = inputField;
   const toolTip = error || "";
 
+  const commonProps = { inputField, label: oneLineRow ? "" : label, onchange };
+
   return React.useMemo(
     () => (
       <Grid item {...gridProps}>
-        <TextInput
-          fullWidth
-          title={oneLineRow ? error || "" : ""}
-          inputField={inputField}
-          variant={"outlined"}
-          label={oneLineRow ? "" : label}
-          hiddenLabel={oneLineRow}
-          needHelperText={!oneLineRow}
-          margin={oneLineRow ? "none" : "dense"}
-          sx={{
-            "& .MuiInputBase-input": {
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            },
-          }}
-          {...textFieldProps}
-          validateHelpers={validateHelpers}
-          validateOptions={validateOptions}
-          mutators={mutators}
-          onchange={onchange}
-        />
+        {columnType === "text" ? (
+          <TextInput
+            fullWidth
+            title={oneLineRow ? error || "" : ""}
+            variant={"outlined"}
+            hiddenLabel={oneLineRow}
+            needHelperText={!oneLineRow}
+            margin={oneLineRow ? "none" : "dense"}
+            sx={{
+              "& .MuiInputBase-input": {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              },
+            }}
+            {...textFieldProps}
+            validateHelpers={validateHelpers}
+            validateOptions={validateOptions}
+            mutators={mutators}
+            {...commonProps}
+          />
+        ) : (
+          <DateTimeInput {...commonProps} />
+        )}
       </Grid>
     ),
     [oneLineRow, label, inputField, validateHelpers, validateOptions, mutators]
