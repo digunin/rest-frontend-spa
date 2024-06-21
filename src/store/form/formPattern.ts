@@ -7,6 +7,7 @@ import {
   WithInputField,
 } from "./types";
 import { FormName, TypeOfFieldName } from "./setup-forms.types";
+import { error_messages } from "../../utils/text";
 
 export const createSliceOptions = <N extends FormName>(
   name: N,
@@ -27,12 +28,12 @@ export const createSliceOptions = <N extends FormName>(
         action: PayloadAction<FormPayload<N>>
       ) => {
         const { payload } = action;
-
-        Object.keys(payload).forEach(
-          (fieldName) =>
-            (state[fieldName as TypeOfFieldName<N>].value =
-              payload[fieldName as TypeOfFieldName<N>])
-        );
+        Object.keys(payload).forEach((key) => {
+          const fieldName = key as TypeOfFieldName<N>;
+          const value = payload[fieldName];
+          state[fieldName].value = value;
+          if (value !== "") state[fieldName].error = "";
+        });
       },
       setTouchedAll: (state: FormState<N>) => {
         for (let name of Object.keys(state)) {
