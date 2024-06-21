@@ -20,6 +20,7 @@ import {
   setViewMode,
 } from "../../../store/dbRowModeSlice";
 import { useCallback } from "react";
+import { useConfirmDialog } from "../DataGridTable/useConfirmDialog";
 
 export const useDataTable = () => {
   const { isCreate, isEdit } = useAppSelector((state) => state.dbRowModeState);
@@ -29,6 +30,8 @@ export const useDataTable = () => {
     inputFields,
     setDbrecordInputField
   );
+  const { askConfirm, confirmOpen, onClose, onConfirm, setConfirmOpen } =
+    useConfirmDialog();
 
   const { data } = useLoadDataQuery();
   const [createRow] = useCreateRowMutation();
@@ -72,9 +75,14 @@ export const useDataTable = () => {
     dispatch(resetForm());
   }, []);
 
-  const ondelete = useCallback((id: RecordID) => {
-    deleteRow(id);
-  }, []);
+  const ondelete = useCallback(
+    (id: RecordID) => {
+      if (askConfirm) {
+        setConfirmOpen(() => () => deleteRow(id));
+      } else deleteRow(id);
+    },
+    [askConfirm]
+  );
 
   const onCreate = useCallback(() => {
     dispatch(setCreateMoode());
@@ -87,6 +95,9 @@ export const useDataTable = () => {
     onsave,
     oncancel,
     onCreate,
+    confirmOpen,
+    onClose,
+    onConfirm,
     isCreate,
     isEdit,
     inputFields,
