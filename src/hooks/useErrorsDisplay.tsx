@@ -9,7 +9,7 @@ export const useErrorsDisplay = () => {
   const dispatch = useAppDispatch();
   const { showSnackbar } = useAppSnackbar();
   const { error: userError } = useSignIn();
-  const dataError = useAppSelector((state) => state.databaseErrorState.error);
+  const dataError = useAppSelector((state) => state.databaseStatusState.error);
 
   useEffect(() => {
     if (userError) showSnackbar(userError);
