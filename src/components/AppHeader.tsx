@@ -4,16 +4,26 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { Logout } from "@mui/icons-material";
-import { Toolbar } from "@mui/material";
+import {
+  Button,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Toolbar,
+} from "@mui/material";
 import { setUser } from "../store/userSlice";
 import { useAuth } from "../hooks/useAuth";
-import { useAppDispatch } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 import { APP_BAR_HEIGHT } from "../utils/css-var";
 import { label_text } from "../utils/text";
+import { toggleDBViewMode } from "../store/dbRowModeSlice";
 
 const AppHeader = () => {
   const dispatch = useAppDispatch();
   const { isAuth, username } = useAuth();
+  const muiDataGridView = useAppSelector(
+    (state) => state.dbRowModeState.muiDataGridView
+  );
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
@@ -28,6 +38,17 @@ const AppHeader = () => {
           </Typography>
           {isAuth && (
             <>
+              <Box
+                sx={{ backgroundColor: "white", mr: 3, borderRadius: "5px" }}
+              >
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => dispatch(toggleDBViewMode())}
+                >{`Включить ${
+                  muiDataGridView ? "собственный компонент" : "MUI DataGrid"
+                }`}</Button>
+              </Box>
               <Typography variant="h6" component="span">
                 {username}
               </Typography>

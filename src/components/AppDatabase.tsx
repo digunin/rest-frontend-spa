@@ -7,9 +7,15 @@ import { useAppSelector } from "../store";
 import AppConfirmDialog from "./display-data/DataGridTable/AppConfirmDialog";
 
 const Database = lazy(() => import("./display-data/data-table/DBTable"));
+const MuiDataGrid = lazy(
+  () => import("./display-data/DataGridTable/FullFeaturedCrudGrid")
+);
 
 const AppDatabase = () => {
   const { data, isLoading } = useLoadDataQuery();
+  const muiDataGridView = useAppSelector(
+    (state) => state.dbRowModeState.muiDataGridView
+  );
   const {
     isCreate,
     isEdit,
@@ -25,23 +31,29 @@ const AppDatabase = () => {
   return (
     <Suspense>
       <Paper>
-        <LinearProgressBar show={isLoading} />
-        <Database
-          data={data || []}
-          oneLineRowBreakpoint="lg"
-          isCreate={isCreate}
-          isEdit={isEdit}
-          inputFields={inputFields}
-          fetchingID={fetchingID}
-          {...handlers}
-        />
-        <AppConfirmDialog
-          title="Подтвердите удаление"
-          body=""
-          open={!!confirmOpen}
-          onClose={onClose}
-          onConfirm={onConfirm()}
-        />
+        {muiDataGridView ? (
+          <MuiDataGrid data={data || []} loading={isLoading} />
+        ) : (
+          <>
+            <LinearProgressBar show={isLoading} />
+            <Database
+              data={data || []}
+              oneLineRowBreakpoint="lg"
+              isCreate={isCreate}
+              isEdit={isEdit}
+              inputFields={inputFields}
+              fetchingID={fetchingID}
+              {...handlers}
+            />
+            <AppConfirmDialog
+              title="Подтвердите удаление"
+              body=""
+              open={!!confirmOpen}
+              onClose={onClose}
+              onConfirm={onConfirm()}
+            />
+          </>
+        )}
       </Paper>
     </Suspense>
   );
