@@ -11,6 +11,7 @@ import {
 import { DatabaseData, RecordID, SingleRecord } from "../../../api/types";
 import { FormState } from "../../../store/form/types";
 import { label_text } from "../../../utils/text";
+import { ArrayOfID, newRowID } from "../../../store/databaseStatusSlice";
 
 type DBTableProps = {
   data: DatabaseData;
@@ -18,6 +19,7 @@ type DBTableProps = {
   isCreate: boolean;
   isEdit: RecordID | null;
   inputFields: FormState<"dbrecord">;
+  fetchingID: ArrayOfID;
 } & DBHandlers;
 
 export type DBHandlers = {
@@ -36,10 +38,12 @@ const DatabaseTable: FC<DBTableProps> = ({
   isEdit,
   inputFields,
   onCreate,
+  fetchingID,
   ...handlers
 }) => {
   const theme = useTheme();
   const oneLineRow = useMediaQuery(theme.breakpoints.up(oneLineRowBreakpoint));
+
   return (
     <div className="database-table">
       <Box>
@@ -54,6 +58,7 @@ const DatabaseTable: FC<DBTableProps> = ({
           row={row}
           inputFields={isEdit === row.id ? inputFields : undefined}
           oneLineRow={oneLineRow}
+          isFetching={fetchingID.includes(row.id)}
           {...handlers}
         />
       ))}
@@ -62,6 +67,7 @@ const DatabaseTable: FC<DBTableProps> = ({
           key="new-row"
           inputFields={inputFields}
           oneLineRow={oneLineRow}
+          isFetching={fetchingID.includes(newRowID)}
           {...handlers}
         />
       )}

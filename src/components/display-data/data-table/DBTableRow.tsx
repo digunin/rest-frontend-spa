@@ -13,12 +13,14 @@ export type TRProps = {
   row?: DatabaseRow;
   oneLineRow?: boolean;
   inputFields?: FormState<"dbrecord">;
+  isFetching?: boolean;
 } & Omit<DBHandlers, "onCreate">;
 
 const DBTableRow: FC<TRProps> = ({
   row,
   inputFields,
   oneLineRow,
+  isFetching,
   oninput,
   onedit,
   ondelete,
@@ -54,6 +56,7 @@ const DBTableRow: FC<TRProps> = ({
               key={`${row?.id || "new-row"}-actions`}
               onedit={() => onedit(createMode ? "" : row!.id)}
               ondelete={() => ondelete(createMode ? "" : row!.id)}
+              isFetching={isFetching}
               {...handlers}
             />
           );
