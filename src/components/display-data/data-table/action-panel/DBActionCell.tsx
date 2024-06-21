@@ -8,7 +8,10 @@ import DBActionPanel, {
 
 type DBACell = ViewModeCallbacks &
   EditModeCallbacks &
-  Omit<DBCell, "label" | "value"> & { isLoading?: boolean; editMode?: boolean };
+  Omit<DBCell, "label" | "value"> & {
+    isFetching?: boolean;
+    editMode?: boolean;
+  };
 
 const DBActionCell: FC<DBACell> = ({
   isHead,
@@ -17,7 +20,7 @@ const DBActionCell: FC<DBACell> = ({
   oncancel,
   onsave,
   editMode,
-  isLoading,
+  isFetching,
   ...gridProps
 }) => {
   return (
@@ -25,7 +28,7 @@ const DBActionCell: FC<DBACell> = ({
       {editMode ? (
         <DBActionPanel<"edit">
           mode="edit"
-          isLoading={isLoading}
+          isFetching={isFetching}
           callbacks={{
             oncancel,
             onsave,
@@ -34,7 +37,7 @@ const DBActionCell: FC<DBACell> = ({
       ) : (
         <DBActionPanel<"view">
           mode="view"
-          isLoading={isLoading}
+          isFetching={isFetching}
           callbacks={{
             onedit,
             ondelete,

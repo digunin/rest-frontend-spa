@@ -16,7 +16,7 @@ export type EditModeCallbacks = {
 type DBAProps<T extends ActionPanelMode> = {
   mode: T;
   style?: "icon" | "button";
-  isLoading?: boolean;
+  isFetching?: boolean;
   callbacks: T extends "view"
     ? ViewModeCallbacks
     : T extends "edit"
@@ -28,7 +28,7 @@ const DBActionPanel = <T extends ActionPanelMode>({
   mode,
   style = "icon",
   callbacks,
-  isLoading = false,
+  isFetching = false,
 }: DBAProps<T>) => {
   const isViewModeCallbacks = (
     callbacks: ViewModeCallbacks | EditModeCallbacks
@@ -49,12 +49,12 @@ const DBActionPanel = <T extends ActionPanelMode>({
         <>
           <DBActioButton
             action="edit"
-            disabled={isLoading}
+            disabled={isFetching}
             onclick={callbacks.onedit}
           />
           <DBActioButton
             action="delete"
-            disabled={isLoading}
+            disabled={isFetching}
             onclick={callbacks.ondelete}
           />
         </>
@@ -62,17 +62,17 @@ const DBActionPanel = <T extends ActionPanelMode>({
         <>
           <DBActioButton
             action="save"
-            disabled={isLoading}
+            disabled={isFetching}
             onclick={callbacks.onsave}
           />
           <DBActioButton
             action="cancel"
-            disabled={isLoading}
+            disabled={isFetching}
             onclick={callbacks.oncancel}
           />
         </>
       )}
-      <IconLoader spin={isLoading} />
+      <IconLoader spin={isFetching} />
     </Box>
   );
 };
