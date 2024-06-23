@@ -9,7 +9,7 @@ import { RootState } from "../store";
 import { transformResponse } from "../utils/transform-response";
 import { error_messages } from "../utils/text";
 
-const { HOST_URL, READ_URL, CREATE_URL, UPDATE_URL, DEETE_URL } = urls;
+const { HOST_URL, READ_URL, CREATE_URL, UPDATE_URL, DELETE_URL } = urls;
 const { POST, PUT, DELETE } = http_methods;
 
 export const transform_error_response = (error: FetchBaseQueryError) => {
@@ -64,7 +64,7 @@ export const databaseAPI = createApi({
     }),
     deleteRow: build.mutation<void, RecordID>({
       query: (id) => ({
-        url: `${DEETE_URL}/${id}`,
+        url: `${DELETE_URL}/${id}`,
         method: DELETE,
       }),
       invalidatesTags: ["Rows"],

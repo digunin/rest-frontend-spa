@@ -7,7 +7,7 @@ const url_prod_mode = {
   READ_URL: process.env.READ_URL as string,
   CREATE_URL: process.env.CREATE_URL as string,
   UPDATE_URL: process.env.UPDATE_URL as string,
-  DEETE_URL: process.env.DEETE_URL as string,
+  DELETE_URL: process.env.DEETE_URL as string,
 };
 
 const url_dev_mode = {
@@ -16,7 +16,7 @@ const url_dev_mode = {
   READ_URL: "data",
   CREATE_URL: "data",
   UPDATE_URL: "data",
-  DEETE_URL: "data",
+  DELETE_URL: "data",
 };
 
 const prod_http_methods: { [key in HTTPMethods]: HTTPMethods } = {
