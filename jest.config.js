@@ -6,5 +6,14 @@ module.exports = {
     "^.+\\.(j|t)sx?$": "ts-jest",
   },
   transformIgnorePatterns: [`node_modules/(?!nanoid/)`],
+  testEnvironmentOptions: {
+    customExportConditions: [""],
+  },
   setupFiles: ["./jest.setup.js"],
 };
+
+// module.exports = {
+//   testEnvironmentOptions: {
+//     customExportConditions: [''],
+//   },
+// }
