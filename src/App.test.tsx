@@ -6,18 +6,15 @@ import { renderWithProvider } from "./utils/rtl-render-helper";
 import * as Cookie from "./utils/cookies-api";
 import { label_text } from "./utils/text";
 import { fakeCredentials, fakeToken } from "./api/types";
-
-const DELAY = 1500;
-
-const dbReset = async () => {
-  await fetch("http://localhost:3300/dbreset");
-};
+import { server } from "./mocks/node";
 
 describe("App testing", () => {
   const spyGetCookie = jest.spyOn(Cookie, "getCookies");
   jest.spyOn(console, "error").mockImplementation();
 
-  beforeAll(async () => await dbReset());
+  beforeAll(() => server.listen());
+  beforeEach(() => server.resetHandlers());
+  afterAll(() => server.close());
 
   test("render with user = null", async () => {
     renderWithProvider(<App />);
@@ -133,10 +130,7 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
-      timeout: DELAY,
-    });
-    expect(screen.getByText("1111")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("1111")).toBeInTheDocument());
     expect(screen.getByText("2222")).toBeInTheDocument();
     expect(screen.getByText("3333")).toBeInTheDocument();
     expect(screen.getByText("4444")).toBeInTheDocument();
@@ -150,31 +144,32 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
-      timeout: DELAY,
-    });
-    fireEvent.click(screen.getByText(label_text.addNewRecord));
-    const rows = screen.getAllByRole("row");
-    expect(rows.length).toBe(7);
-    const editedRow = rows[1];
-    const editedCells = editedRow.getElementsByTagName("input");
-    const employee_number_input = editedCells[0];
-    const document_type_input = editedCells[2];
-    expect(employee_number_input).toHaveAttribute("type", "number");
-    expect(document_type_input).toHaveAttribute("type", "text");
-    fireEvent.change(employee_number_input, { target: { value: 654 } });
-    fireEvent.change(document_type_input, { target: { value: "new doc" } });
-    const actionButtons = editedRow.getElementsByTagName("button");
-    expect(actionButtons.length).toBe(3);
-    const saveButton = actionButtons[0];
-    expect(saveButton).toHaveAttribute("aria-label", "Save");
-    fireEvent.click(saveButton);
     await waitFor(() =>
-      expect(screen.queryByRole("menuitem", { name: /save/i })).toBeFalsy()
+      expect(screen.getByText(label_text.addNewRecord)).toBeInTheDocument()
     );
-    expect(screen.queryByRole("menuitem", { name: /cancel/i })).toBeFalsy();
-    expect(screen.getAllByRole("menuitem", { name: /edit/i }).length).toBe(6);
-    expect(screen.getAllByRole("menuitem", { name: /delete/i }).length).toBe(6);
+    fireEvent.click(screen.getByText(label_text.addNewRecord));
+
+    expect(
+      screen.getByRole("row").getElementsByClassName("editing-input").length
+    ).toBe(6);
+    const editedCells = screen.getByRole("row").getElementsByTagName("input");
+
+    fireEvent.change(editedCells[0], { target: { value: "654" } });
+    fireEvent.change(editedCells[2], { target: { value: "value of new row" } });
+    fireEvent.change(editedCells[3], { target: { value: "value of new row" } });
+    fireEvent.change(editedCells[4], { target: { value: "value of new row" } });
+    fireEvent.change(editedCells[6], { target: { value: "value of new row" } });
+    fireEvent.change(editedCells[7], { target: { value: "value of new row" } });
+
+    fireEvent.click(screen.getByRole("menuitem", { name: /save/i }));
+    await waitFor(() => expect(screen.getByText("654")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("654"));
+    await waitFor(() =>
+      expect(screen.getAllByDisplayValue("value of new row").length).toBe(5)
+    );
+    expect(
+      screen.getByRole("row").getElementsByClassName("editing-input").length
+    ).toBe(0);
   });
 
   test("edit row", async () => {
@@ -183,18 +178,9 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
-      timeout: DELAY,
-    });
-    const rows = screen.getAllByRole("row");
-    expect(rows.length).toBe(6);
-    const editedRow = rows[2];
-    const edit_delete_button = editedRow.getElementsByTagName("button");
-    expect(edit_delete_button.length).toBe(3);
-    expect(edit_delete_button[0]).toHaveAttribute("aria-label", "Edit");
-    expect(edit_delete_button[1]).toHaveAttribute("aria-label", "Delete");
-    expect(edit_delete_button[2]).toHaveAttribute("aria-label", "indicator");
-    fireEvent.click(edit_delete_button[0]);
+    await waitFor(() => expect(screen.getByText("3333")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("2222"));
+    fireEvent.click(screen.getByRole("menuitem", { name: /edit/i }));
     await waitFor(() =>
       expect(
         screen.queryByRole("menuitem", { name: /save/i })
@@ -203,27 +189,43 @@ describe("App testing", () => {
     expect(
       screen.queryByRole("menuitem", { name: /cancel/i })
     ).toBeInTheDocument();
-    const editedCells = screen
-      .getAllByRole("row")[2]
-      .getElementsByTagName("input");
-    const employee_number_input = editedCells[0];
-    const document_type_input = editedCells[2];
-    expect(employee_number_input).toHaveValue(2222);
-    expect(document_type_input).toHaveValue("Приказ о приеме");
-    fireEvent.change(employee_number_input, { target: { value: 222 } });
-    fireEvent.change(document_type_input, { target: { value: "Приказ" } });
-    const save_cancel_button = editedRow.getElementsByTagName("button");
-    expect(save_cancel_button.length).toBe(3);
-    expect(save_cancel_button[0]).toHaveAttribute("aria-label", "Save");
-    expect(save_cancel_button[1]).toHaveAttribute("aria-label", "Cancel");
-    expect(save_cancel_button[2]).toHaveAttribute("aria-label", "indicator");
-    fireEvent.click(save_cancel_button[0]);
+
+    expect(
+      screen.getByRole("row").getElementsByClassName("editing-input").length
+    ).toBe(6);
+    const editedCells = screen.getByRole("row").getElementsByTagName("input");
+    fireEvent.change(editedCells[2], {
+      target: { value: "value of editing row" },
+    });
+    fireEvent.change(editedCells[3], {
+      target: { value: "value of editing row" },
+    });
+    fireEvent.change(editedCells[4], {
+      target: { value: "value of editing row" },
+    });
+    fireEvent.change(editedCells[6], {
+      target: { value: "value of editing row" },
+    });
+    fireEvent.change(editedCells[7], {
+      target: { value: "value of editing row" },
+    });
+
+    fireEvent.click(screen.getByRole("menuitem", { name: /save/i }));
     await waitFor(() =>
       expect(screen.queryByRole("menuitem", { name: /save/i })).toBeFalsy()
     );
     expect(screen.queryByRole("menuitem", { name: /cancel/i })).toBeFalsy();
-    expect(screen.getAllByRole("menuitem", { name: /edit/i }).length).toBe(5);
-    expect(screen.getAllByRole("menuitem", { name: /delete/i }).length).toBe(5);
+    expect(screen.getByRole("menuitem", { name: /edit/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: /delete/i })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("row").getElementsByClassName("editing-input").length
+    ).toBe(0);
+    await waitFor(() =>
+      expect(screen.getAllByDisplayValue("value of editing row").length).toBe(5)
+    );
   });
 
   test("delete row test", async () => {
@@ -232,87 +234,110 @@ describe("App testing", () => {
       token: fakeToken,
     });
     renderWithProvider(<App />);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(6), {
-      timeout: DELAY,
-    });
-    let deleteButtons = screen.getAllByRole("menuitem", {
-      name: /Delete/i,
-    });
-    fireEvent.click(deleteButtons[4]);
+    await waitFor(() => expect(screen.getByText("1111")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("5555"));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("menuitem", {
+          name: /delete/i,
+        })
+      ).toBeInTheDocument()
+    );
+    fireEvent.click(
+      screen.getByRole("menuitem", {
+        name: /delete/i,
+      })
+    );
     await waitFor(() =>
       expect(screen.getByText(/удалить/i)).toBeInTheDocument()
     );
     fireEvent.click(screen.getByText(/удалить/i));
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(5), {
-      timeout: DELAY,
-    });
+    await waitFor(() => expect(screen.queryByText("5555")).toBeFalsy());
     expect(screen.getByText("1111")).toBeInTheDocument();
     expect(screen.getByText("2222")).toBeInTheDocument();
     expect(screen.getByText("3333")).toBeInTheDocument();
     expect(screen.getByText("4444")).toBeInTheDocument();
-    expect(screen.queryByText("5555")).toBeFalsy();
 
-    deleteButtons = screen.getAllByRole("menuitem", {
-      name: /Delete/i,
-    });
-    fireEvent.click(deleteButtons[0]);
+    fireEvent.click(screen.getByText("1111"));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("menuitem", {
+          name: /delete/i,
+        })
+      ).toBeInTheDocument()
+    );
+
+    fireEvent.click(
+      screen.getByRole("menuitem", {
+        name: /delete/i,
+      })
+    );
     await waitFor(() =>
       expect(screen.getByText(/удалить/i)).toBeInTheDocument()
     );
     fireEvent.click(screen.getByLabelText(label_text.askConfirm));
     fireEvent.click(screen.getByText(/удалить/i));
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(4), {
-      timeout: DELAY,
-    });
-    expect(screen.queryByText("1111")).toBeFalsy();
+    await waitFor(() => expect(screen.queryByText("1111")).toBeFalsy());
     expect(screen.getByText("2222")).toBeInTheDocument();
     expect(screen.getByText("3333")).toBeInTheDocument();
     expect(screen.getByText("4444")).toBeInTheDocument();
     expect(screen.queryByText("5555")).toBeFalsy();
 
-    deleteButtons = screen.getAllByRole("menuitem", {
-      name: /Delete/i,
-    });
-    fireEvent.click(deleteButtons[2]);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(3), {
-      timeout: DELAY,
-    });
+    fireEvent.click(screen.getByText("4444"));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("menuitem", {
+          name: /delete/i,
+        })
+      ).toBeInTheDocument()
+    );
+    fireEvent.click(
+      screen.getByRole("menuitem", {
+        name: /delete/i,
+      })
+    );
+    await waitFor(() => expect(screen.queryByText("4444")).toBeFalsy());
     expect(screen.queryByText("1111")).toBeFalsy();
     expect(screen.getByText("2222")).toBeInTheDocument();
     expect(screen.getByText("3333")).toBeInTheDocument();
-    expect(screen.queryByText("4444")).toBeFalsy();
     expect(screen.queryByText("5555")).toBeFalsy();
 
-    deleteButtons = screen.getAllByRole("menuitem", {
-      name: /Delete/i,
-    });
-    fireEvent.click(deleteButtons[1]);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(2), {
-      timeout: DELAY,
-    });
+    fireEvent.click(screen.getByText("3333"));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("menuitem", {
+          name: /delete/i,
+        })
+      ).toBeInTheDocument()
+    );
+    fireEvent.click(
+      screen.getByRole("menuitem", {
+        name: /delete/i,
+      })
+    );
+    await waitFor(() => expect(screen.queryByText("3333")).toBeFalsy());
     expect(screen.queryByText("1111")).toBeFalsy();
     expect(screen.getByText("2222")).toBeInTheDocument();
-    expect(screen.queryByText("3333")).toBeFalsy();
     expect(screen.queryByText("4444")).toBeFalsy();
     expect(screen.queryByText("5555")).toBeFalsy();
 
-    deleteButtons = screen.getAllByRole("menuitem", {
-      name: /Delete/i,
-    });
-    fireEvent.click(deleteButtons[0]);
-    await waitFor(() => expect(screen.getAllByRole("row").length).toBe(1), {
-      timeout: DELAY,
-    });
-    expect(screen.queryByText("1111")).toBeFalsy();
-    expect(screen.queryByText("2222")).toBeFalsy();
-    expect(screen.queryByText("3333")).toBeFalsy();
-    expect(screen.queryByText("4444")).toBeFalsy();
-    expect(screen.queryByText("5555")).toBeFalsy();
-
-    expect(
-      screen.queryByRole("menuitem", {
-        name: /Delete/i,
+    fireEvent.click(screen.getByText("2222"));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("menuitem", {
+          name: /delete/i,
+        })
+      ).toBeInTheDocument()
+    );
+    fireEvent.click(
+      screen.getByRole("menuitem", {
+        name: /delete/i,
       })
-    ).toBeFalsy();
-  }, 15000);
+    );
+    await waitFor(() => expect(screen.queryByText("2222")).toBeFalsy());
+    expect(screen.queryByText("1111")).toBeFalsy();
+    expect(screen.queryByText("3333")).toBeFalsy();
+    expect(screen.queryByText("4444")).toBeFalsy();
+    expect(screen.queryByText("5555")).toBeFalsy();
+  });
 });

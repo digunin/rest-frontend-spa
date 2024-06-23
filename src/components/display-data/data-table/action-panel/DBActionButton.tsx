@@ -22,7 +22,12 @@ const actionIcons: { [key in ActionType]: ComponentType<SvgIconProps> } = {
 const DBActioButton: FC<ABProps> = ({ onclick, action, disabled }) => {
   const Icon = actionIcons[action];
   return (
-    <IconButton aria-label={action} onClick={onclick} disabled={disabled}>
+    <IconButton
+      role="menuitem"
+      aria-label={action}
+      onClick={onclick}
+      disabled={disabled}
+    >
       <Icon fontSize="small" />
     </IconButton>
   );

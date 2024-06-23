@@ -18,6 +18,7 @@ const TextInput: FC<TIProps> = ({
   const { value, error, unTouched } = inputField;
   return (
     <TextField
+      className="editing-input"
       value={value}
       error={!unTouched && !!error}
       helperText={needHelperText ? (!unTouched && error) || " " : ""}

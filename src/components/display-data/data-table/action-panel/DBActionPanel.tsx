@@ -38,6 +38,7 @@ const DBActionPanel = <T extends ActionPanelMode>({
 
   return (
     <Box
+      role="menu"
       className="db-table-row-actions"
       sx={{
         width: { lg: "100%" },

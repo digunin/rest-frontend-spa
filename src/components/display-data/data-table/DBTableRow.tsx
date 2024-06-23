@@ -32,7 +32,7 @@ const DBTableRow: FC<TRProps> = ({
   const validator = React.useMemo(() => [notEmpty], []);
 
   return (
-    <Grid container className="table-row">
+    <Grid container className="table-row" role="row">
       {columnsDef.map((col_def) => {
         const { columnKey, columnName, type, ...gridProps } = col_def;
 
