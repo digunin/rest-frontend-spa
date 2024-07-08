@@ -11,12 +11,6 @@ import { error_messages } from "../../utils/text";
 
 export const createSliceOptions = <N extends FormName>(
   name: N,
-  reducer: {
-    [key in ReducerName<N>]: {
-      reducer: FormReducer<N>;
-      prepare: PrepareAction<WithInputField<TypeOfFieldName<N>>>;
-    };
-  },
   initialState: FormState<N>
 ) => {
   return {
@@ -43,7 +37,20 @@ export const createSliceOptions = <N extends FormName>(
       resetForm: (state: FormState<N>) => {
         return initialState;
       },
-      ...reducer,
+      setInputField: {
+        reducer: (
+          state: FormState<N>,
+          action: PayloadAction<WithInputField<TypeOfFieldName<N>>>
+        ) => {
+          state[action.payload.name] = {
+            ...action.payload.inputPayload,
+            unTouched: false,
+          };
+        },
+        prepare: (name: any, value: string, error: string) => {
+          return { payload: { name, inputPayload: { value, error } } };
+        },
+      },
     },
   };
 };
@@ -57,17 +64,17 @@ export const isFormValid = <T extends FormState<any>>(
   return true;
 };
 
-export const formReducerWithPreparedPayload = {
-  reducer: <N extends FormName>(
-    state: FormState<N>,
-    action: PayloadAction<WithInputField<TypeOfFieldName<N>>>
-  ) => {
-    state[action.payload.name] = {
-      ...action.payload.inputPayload,
-      unTouched: false,
-    };
-  },
-  prepare: (name: any, value: string, error: string) => {
-    return { payload: { name, inputPayload: { value, error } } };
-  },
-};
+// export const formReducerWithPreparedPayload = {
+//   reducer: <N extends FormName>(
+//     state: FormState<N>,
+//     action: PayloadAction<WithInputField<TypeOfFieldName<N>>>
+//   ) => {
+//     state[action.payload.name] = {
+//       ...action.payload.inputPayload,
+//       unTouched: false,
+//     };
+//   },
+//   prepare: (name: any, value: string, error: string) => {
+//     return { payload: { name, inputPayload: { value, error } } };
+//   },
+// };

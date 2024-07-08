@@ -2,7 +2,7 @@ import { useForm } from "../../../hooks/useForm";
 import { useAppSelector } from "../../../store";
 import {
   selectIsFormValid,
-  setDbrecordInputField,
+  setInputField as setDbrecordInputField,
   resetForm,
   setTouchedAll,
   setInitialValues,

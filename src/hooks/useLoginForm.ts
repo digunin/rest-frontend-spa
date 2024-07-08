@@ -4,7 +4,7 @@ import { useAppSelector } from "../store";
 import {
   resetForm,
   selectIsFormValid,
-  setLoginInputField,
+  setInputField as setLoginInputField,
   setTouchedAll,
 } from "../store/form/loginFormSlice";
 import { useLoginMutation } from "../api/authAPI";
