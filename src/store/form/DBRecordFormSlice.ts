@@ -1,23 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createSliceOptions, isFormValid } from "./formPattern";
-import { defaulInputField } from "./types";
+import {
+  createSliceOptions,
+  isFormValid,
+  defaultInputField,
+} from "simple-mui-redux-form";
 import { RootState } from "..";
 import { error_messages } from "../../utils/text";
+import { DBRecordFormFieldName } from "./setup-forms.types";
 
 const DBRecordSlice = createSlice(
-  createSliceOptions("dbrecord", {
-    employeeNumber: { ...defaulInputField, error: error_messages.notEmpty },
-    employeeSigDate: { ...defaulInputField, error: error_messages.notEmpty },
-    documentStatus: { ...defaulInputField, error: error_messages.notEmpty },
-    documentType: { ...defaulInputField, error: error_messages.notEmpty },
-    documentName: { ...defaulInputField, error: error_messages.notEmpty },
-    companySigDate: { ...defaulInputField, error: error_messages.notEmpty },
+  createSliceOptions<DBRecordFormFieldName>("dbrecord", {
+    employeeNumber: { ...defaultInputField, error: error_messages.notEmpty },
+    employeeSigDate: { ...defaultInputField, error: error_messages.notEmpty },
+    documentStatus: { ...defaultInputField, error: error_messages.notEmpty },
+    documentType: { ...defaultInputField, error: error_messages.notEmpty },
+    documentName: { ...defaultInputField, error: error_messages.notEmpty },
+    companySigDate: { ...defaultInputField, error: error_messages.notEmpty },
     companySignatureName: {
-      ...defaulInputField,
+      ...defaultInputField,
       error: error_messages.notEmpty,
     },
     employeeSignatureName: {
-      ...defaulInputField,
+      ...defaultInputField,
       error: error_messages.notEmpty,
     },
   })

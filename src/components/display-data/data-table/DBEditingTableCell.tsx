@@ -1,13 +1,16 @@
 import React, { FC } from "react";
 import { DBCell } from "./DBTableCell";
-import { WithHandlingError } from "../../form/errors/WithErrorHandling";
+import {
+  WithHandlingError,
+  TextInput,
+  TextInputProps,
+} from "simple-mui-redux-form";
 import { Grid, GridProps } from "@mui/material";
-import TextInput, { TIProps } from "../../form/input/TextInput";
 import DateTimeInput from "../../form/input/DateTimeInput";
 
 type EditingTableCell = Omit<DBCell, "value" | "editMode" | "isHead"> &
   WithHandlingError &
-  TIProps & { gridProps: GridProps };
+  TextInputProps & { gridProps: GridProps };
 
 const DBEditingTableCell: FC<EditingTableCell> = ({
   inputField,

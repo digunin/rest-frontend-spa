@@ -1,5 +1,5 @@
-import { useForm } from "../../../hooks/useForm";
-import { useAppSelector } from "../../../store";
+import { useForm } from "simple-mui-redux-form";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import {
   selectIsFormValid,
   setInputField as setDbrecordInputField,
@@ -21,12 +21,14 @@ import {
 } from "../../../store/dbRowModeSlice";
 import { useCallback } from "react";
 import { useConfirmDialog } from "../DataGridTable/useConfirmDialog";
+import { DBRecordFormFieldName } from "../../../store/form/setup-forms.types";
 
 export const useDataTable = () => {
+  const dispatch = useAppDispatch();
   const { isCreate, isEdit } = useAppSelector((state) => state.dbRowModeState);
   const inputFields = useAppSelector((state) => state.dbRecordFormState);
   const isFormValid = useAppSelector(selectIsFormValid);
-  const { formPayload, handleChange, dispatch } = useForm(
+  const { formPayload, handleChange } = useForm<DBRecordFormFieldName>(
     inputFields,
     setDbrecordInputField
   );

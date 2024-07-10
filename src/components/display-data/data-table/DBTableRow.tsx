@@ -6,13 +6,13 @@ import { columnsDef } from "./column-settings";
 import DBActionCell from "./action-panel/DBActionCell";
 import DBEditingTableCell from "./DBEditingTableCell";
 import { DBHandlers } from "./DBTable";
-import { FormState } from "../../../store/form/types";
-import { notEmpty } from "../../form/errors";
+import { FormState, notEmpty } from "simple-mui-redux-form";
+import { DBRecordFormFieldName } from "../../../store/form/setup-forms.types";
 
 export type TRProps = {
   row?: DatabaseRow;
   oneLineRow?: boolean;
-  inputFields?: FormState<"dbrecord">;
+  inputFields?: FormState<DBRecordFormFieldName>;
   isFetching?: boolean;
 } & Omit<DBHandlers, "onCreate">;
 

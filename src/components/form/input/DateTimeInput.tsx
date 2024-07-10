@@ -4,7 +4,7 @@ import {
   DateTimePickerProps,
 } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { InputField } from "../../../store/form/types";
+import { InputField } from "simple-mui-redux-form";
 import {
   LocalizationProvider,
   PickerChangeHandlerContext,

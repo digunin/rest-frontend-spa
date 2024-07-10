@@ -1,10 +1,9 @@
 import React from "react";
 import { Box, Button, Grid } from "@mui/material";
-import TextInput from "./input/TextInput";
-import PasswordInput from "./input/PasswordInput";
+import { NotEmptyTextInput, PasswordInput } from "simple-mui-redux-form";
 import LinearProgressBar from "../LinearProgressBar";
 import { useLoginForm } from "../../hooks/useLoginForm";
-import { notEmpty } from "./errors";
+import { notEmpty } from "simple-mui-redux-form";
 import { label_text } from "../../utils/text";
 
 const Login = () => {
@@ -19,14 +18,13 @@ const Login = () => {
         onSubmit={handleSubmit}
         sx={{ width: 300 }}
       >
-        <TextInput
+        <NotEmptyTextInput
           fullWidth
           autoComplete="login"
           label={label_text.login}
           inputField={username}
-          validateHelpers={[notEmpty]}
           onchange={handleChange("username")}
-        ></TextInput>
+        ></NotEmptyTextInput>
         <PasswordInput
           fullWidth
           label={label_text.password}

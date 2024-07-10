@@ -1,6 +1,6 @@
 import { FormEvent } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 import {
   resetForm,
   selectIsFormValid,
@@ -8,12 +8,14 @@ import {
   setTouchedAll,
 } from "../store/form/loginFormSlice";
 import { useLoginMutation } from "../api/authAPI";
-import { useForm } from "./useForm";
+import { useForm } from "simple-mui-redux-form";
+import { LoginFormFieldName } from "../store/form/setup-forms.types";
 
 export const useLoginForm = () => {
+  const dispatch = useAppDispatch();
   const inputFields = useAppSelector((state) => state.loginFormState);
   const isFormValid = useAppSelector(selectIsFormValid);
-  const { handleChange, formPayload, dispatch } = useForm(
+  const { handleChange, formPayload } = useForm<LoginFormFieldName>(
     inputFields,
     setLoginInputField
   );

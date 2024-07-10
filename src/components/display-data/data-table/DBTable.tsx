@@ -9,16 +9,17 @@ import {
   useTheme,
 } from "@mui/material";
 import { DatabaseData, RecordID, SingleRecord } from "../../../api/types";
-import { FormState } from "../../../store/form/types";
+import { FormState } from "simple-mui-redux-form";
 import { label_text } from "../../../utils/text";
 import { ArrayOfID, newRowID } from "../../../store/databaseStatusSlice";
+import { DBRecordFormFieldName } from "../../../store/form/setup-forms.types";
 
 type DBTableProps = {
   data: DatabaseData;
   oneLineRowBreakpoint: Breakpoint;
   isCreate: boolean;
   isEdit: RecordID | null;
-  inputFields: FormState<"dbrecord">;
+  inputFields: FormState<DBRecordFormFieldName>;
   fetchingID: ArrayOfID;
 } & DBHandlers;
 

@@ -1,13 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createSliceOptions, isFormValid } from "./formPattern";
-import { defaulInputField } from "./types";
+import {
+  createSliceOptions,
+  isFormValid,
+  defaultInputField,
+} from "simple-mui-redux-form";
 import { RootState } from "..";
 import { error_messages } from "../../utils/text";
+import { LoginFormFieldName } from "./setup-forms.types";
 
 const SignInSlice = createSlice(
-  createSliceOptions("login", {
-    username: { ...defaulInputField, error: error_messages.notEmpty },
-    password: { ...defaulInputField, error: error_messages.notEmpty },
+  createSliceOptions<LoginFormFieldName>("login", {
+    username: { ...defaultInputField, error: error_messages.notEmpty },
+    password: { ...defaultInputField, error: error_messages.notEmpty },
   })
 );
 
