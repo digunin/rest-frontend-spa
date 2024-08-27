@@ -49,7 +49,7 @@
 
 ---
 
-[Запустить приложение](https://digunin.github.io/test-frontend-spa/)
+[Запустить приложение](https://digunin.github.io/rest-frontend-spa/)
 
 Аутентификация:
 
